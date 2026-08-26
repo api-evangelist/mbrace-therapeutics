@@ -1,0 +1,268 @@
+openapi: 3.2.0
+info:
+  title: MBrace Therapeutics Content Discovery API
+  version: wp/v2
+  summary: Anonymously readable WordPress REST content API behind mbracetrx.com.
+  description: The read-only content surface MBrace Therapeutics exposes at https://mbracetrx.com/wp-json.
+    MBrace Therapeutics is a privately held, clinical-stage biopharmaceutical company developing antibody-drug
+    conjugates (ADCs) against novel oncology targets, discovered with its SPARTA in vivo antibody selection
+    and target discovery platform. It runs no developer program and markets no product API. This document
+    covers the discovery documents — the API root index plus the registered post type, taxonomy and status
+    vocabularies. These are the routes an agent reads first to learn what the deployment actually holds.
+  contact:
+    name: MBrace Therapeutics
+    url: https://mbracetrx.com/
+  license:
+    name: Proprietary — no published API terms
+    url: https://mbracetrx.com/terms-of-use/
+  x-api-evangelist-provenance: 'Derived by the API Evangelist enrichment pipeline from the live WordPress
+    REST route index at https://mbracetrx.com/wp-json/ (346 routes across 17 namespaces) and verified
+    against live anonymous responses on 2026-08-25. Every query parameter below appears verbatim in that
+    route index''s `args` block for the endpoint it is attached to, every response field was read from
+    a real anonymous response body, and every collection count quoted in a description was read from the
+    `X-WP-Total` response header on that date. MBrace Therapeutics publishes no OpenAPI, no developer
+    portal, no API reference and no developer program for this surface; the humanURL in apis.yml points
+    at the upstream WordPress REST handbook that defines the wp/v2 contract. Write operations and the
+    authenticated administration surface (/wp/v2/settings, /wp/v2/menus, /wp/v2/themes, /wp/v2/plugins,
+    the elementor/*, yoast/v1, redirection/v1, string-locator/v1, wpe/* and wp-abilities/v1 namespaces)
+    are deliberately excluded — they returned 401 anonymously and were not exercised. The deployment is
+    served by WP Engine behind Cloudflare, page HTML is Elementor-rendered, and API responses carry `x-robots-tag:
+    noindex`. Nothing here was obtained with credentials.'
+servers:
+- url: https://mbracetrx.com/wp-json
+  description: Production content API
+tags:
+- name: discovery
+  description: Route, type, taxonomy and status discovery documents.
+paths:
+  /wp/v2/types:
+    get:
+      tags:
+      - discovery
+      operationId: listTypes
+      summary: List registered post types
+      description: 'Returns every registered post type keyed by name, with its rest_base, attached taxonomies
+        and capability flags. 19 types were registered at harvest time, five of them MBrace-specific:
+        board-member, executive-committee, founders, investor and scientific-board.'
+      parameters:
+      - name: context
+        in: query
+        description: Scope under which the request is made; determines fields present in response.
+        schema:
+          type: string
+          enum:
+          - view
+          - embed
+          - edit
+          default: view
+      responses:
+        '200':
+          description: A map of post type name to post type definition.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: object
+        '400':
+          $ref: '#/components/responses/BadRequest'
+  /wp/v2/taxonomies:
+    get:
+      tags:
+      - discovery
+      operationId: listTaxonomies
+      summary: List registered taxonomies
+      description: 'Returns every registered taxonomy keyed by name. Four at harvest time: category (attached
+        to post, board-member, executive-committee and founders), post_tag, nav_menu and wp_pattern_category.'
+      parameters:
+      - name: context
+        in: query
+        description: Scope under which the request is made; determines fields present in response.
+        schema:
+          type: string
+          enum:
+          - view
+          - embed
+          - edit
+          default: view
+      - name: type
+        in: query
+        description: Limit results to taxonomies associated with a specific post type.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: A map of taxonomy name to taxonomy definition.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: object
+        '400':
+          $ref: '#/components/responses/BadRequest'
+  /wp/v2/statuses:
+    get:
+      tags:
+      - discovery
+      operationId: listStatuses
+      summary: List registered post statuses
+      description: Returns every registered post status keyed by slug. Anonymously only `publish` is queryable.
+      parameters:
+      - name: context
+        in: query
+        description: Scope under which the request is made; determines fields present in response.
+        schema:
+          type: string
+          enum:
+          - view
+          - embed
+          - edit
+          default: view
+      responses:
+        '200':
+          description: A map of status slug to status definition.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: object
+        '400':
+          $ref: '#/components/responses/BadRequest'
+  /:
+    get:
+      tags:
+      - discovery
+      operationId: getApiIndex
+      summary: Get the API root index
+      description: The WordPress REST discovery document. Returns site identity (name, url, home, timezone,
+        site_icon_url), the registered namespaces, the authentication schemes on offer, and the full route
+        index with per-endpoint `args`. This is the only machine-readable API description MBrace Therapeutics
+        serves, and every operation in this repo's openapi/ directory was derived from it. 346 routes
+        across 17 namespaces at harvest time.
+      parameters:
+      - name: context
+        in: query
+        description: Scope under which the request is made.
+        schema:
+          type: string
+          enum:
+          - view
+          - embed
+          - help
+          default: view
+      - name: namespace
+        in: query
+        description: Restrict the index to a single namespace.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The API root index document.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiIndex'
+components:
+  schemas:
+    ApiIndex:
+      type: object
+      description: The WordPress REST discovery document served at /wp-json/.
+      properties:
+        name:
+          type: string
+          description: Site title.
+          examples:
+          - MBrace Therapeutics
+        description:
+          type: string
+          description: Site tagline. Empty on this deployment.
+        url:
+          type: string
+          format: uri
+          description: Site URL.
+        home:
+          type: string
+          format: uri
+          description: Site home URL.
+        gmt_offset:
+          type: number
+          description: Site GMT offset in hours.
+          examples:
+          - -7
+        timezone_string:
+          type: string
+          description: Site timezone.
+          examples:
+          - America/Los_Angeles
+        site_icon_url:
+          type: string
+          format: uri
+          description: Site favicon URL.
+        site_logo:
+          type: integer
+          description: Media attachment ID of the site logo.
+          examples:
+          - 104
+        namespaces:
+          type: array
+          items:
+            type: string
+          description: Registered REST namespaces.
+        authentication:
+          type: object
+          description: Authentication schemes on offer. This deployment advertises WordPress application-passwords
+            with its authorization endpoint at /wp-admin/authorize-application.php.
+        routes:
+          type: object
+          description: Route index keyed by route pattern, each carrying namespace, methods and per-endpoint
+            args.
+          additionalProperties:
+            type: object
+        _links:
+          type: object
+          description: Link relations to help and self.
+    Error:
+      type: object
+      description: The WordPress REST error envelope as returned by this deployment. Not RFC 9457 problem+json.
+      required:
+      - code
+      - message
+      - data
+      properties:
+        code:
+          type: string
+          description: Machine-readable error code.
+          examples:
+          - rest_post_invalid_id
+        message:
+          type: string
+          description: Human-readable error message.
+          examples:
+          - Invalid post ID.
+        data:
+          type: object
+          properties:
+            status:
+              type: integer
+              description: The HTTP status code.
+              examples:
+              - 404
+            params:
+              type: object
+              description: Per-parameter messages, present on rest_invalid_param.
+              additionalProperties:
+                type: string
+            details:
+              type: object
+              description: Per-parameter structured detail, present on rest_invalid_param.
+              additionalProperties:
+                type: object
+  responses:
+    BadRequest:
+      description: Invalid parameter.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'

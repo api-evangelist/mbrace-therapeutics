@@ -1,0 +1,53 @@
+generated: '2026-08-25'
+method: searched
+source: >-
+  npm registry.npmjs.org, PyPI, RubyGems, crates.io, NuGet, Maven Central, pkg.go.dev and the GitHub
+  API, searched 2026-08-25 + https://mbracetrx.com site search
+note: >-
+  MBrace Therapeutics publishes no client libraries, no SDKs and no CLI. Every registry probe below
+  either 404d or resolved to an unrelated package by a different owner. NO `SDKs` pointer is emitted
+  in apis.yml — sdk_count is genuinely zero, and a pointer would credit the company with client
+  libraries it does not ship.
+package_count: 0
+official_package_count: 0
+packages: []
+registries_probed:
+- registry: npm
+  queries: [mbrace, mbracetrx, mbrace-therapeutics]
+  result: >-
+    `mbracetrx` and `mbrace-therapeutics` return 404. `mbrace` exists but is NOT first party — it is
+    "a static Mustache compiler for preprocessing HTML pages", published from
+    github.com/mbraceorg/mbrace by the npm user `aguldstrand`, unrelated to this company. Recorded
+    here explicitly so a later pass does not mistake the name collision for a first-party SDK.
+  official_hit: false
+- registry: pypi
+  queries: [mbrace, mbracetrx]
+  result: Both 404.
+  official_hit: false
+- registry: github
+  queries: [mbracetrx, mbrace-therapeutics, mbracetx]
+  result: >-
+    All three organisation lookups returned 404, and a GitHub user/org search for
+    "mbrace therapeutics" returned total_count 0. The company has no GitHub presence.
+  official_hit: false
+- registry: rubygems
+  result: not probed individually — no SDK link, GitHub org or source repository exists to derive a package name from.
+  official_hit: false
+- registry: crates.io
+  result: not probed individually — same reason.
+  official_hit: false
+- registry: nuget
+  result: not probed individually — same reason.
+  official_hit: false
+- registry: maven-central
+  result: not probed individually — same reason.
+  official_hit: false
+- registry: go-modules
+  result: not probed individually — same reason.
+  official_hit: false
+consuming_the_api_without_an_sdk:
+  detail: >-
+    The catalogued surface is the WordPress REST API, so a consumer who wants a client library uses a
+    generic WordPress REST client rather than anything MBrace publishes. Those libraries are
+    third-party and are deliberately NOT listed as packages here, because they are not this
+    company's software and listing them would inflate an SDK count the company has not earned.

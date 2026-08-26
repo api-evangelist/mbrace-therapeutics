@@ -1,0 +1,196 @@
+generated: '2026-08-25'
+method: derived
+source: openapi/ (9 documents) + live anonymous responses and /wp/v2/types + /wp/v2/taxonomies read 2026-08-25
+note: >-
+  Entity-relationship graph of the MBrace Therapeutics content API, derived from the registered post
+  types and taxonomies the deployment reports about itself and from the id-reference fields actually
+  present in live response bodies. The interesting part of this model is not the WordPress core
+  types — it is the five custom post types MBrace registered, which make the company's governance
+  and cap-table disclosures queryable as structured records.
+identifiers:
+  scheme: integer
+  detail: >-
+    Every object is keyed by a site-scoped integer `id`. Identifiers are NOT prefixed or typed, so
+    an id is only meaningful together with the collection it came from — id 104 is a media
+    attachment, id 2787 is an investor. /wp/v2/search returns {id, type, subtype} precisely so a
+    caller can pick the right collection to dereference against.
+  slugs: >-
+    Every object also carries a `slug`, unique within its type, and every collection accepts
+    ?slug= as a lookup. Slugs are the stable human-readable key; ids are the stable machine key.
+entities:
+- name: Post
+  collection: /wp/v2/posts
+  count_observed: 8
+  description: A company news item — press release, conference presentation or publication.
+  key_fields: [id, slug, title, content, excerpt, date, modified, link, author, featured_media, categories, tags]
+  relationships:
+  - type: belongs_to
+    target: User
+    via: author
+  - type: has_one
+    target: MediaItem
+    via: featured_media
+  - type: has_many
+    target: Category
+    via: categories
+  - type: has_many
+    target: Tag
+    via: tags
+    note: Always empty — the post_tag taxonomy carries zero terms on this deployment.
+- name: Page
+  collection: /wp/v2/pages
+  count_observed: 12
+  description: >-
+    A corporate site page — About Us, Pipeline, Discovery Platform, the MBRC-101 and MBRC-201
+    programme pages, Expanded Access Statement, Contact, Terms of Use, Privacy Policy.
+  key_fields: [id, slug, title, content, excerpt, parent, menu_order, date, modified, link, author, featured_media]
+  relationships:
+  - type: belongs_to
+    target: Page
+    via: parent
+    note: Self-referential hierarchy.
+  - type: belongs_to
+    target: User
+    via: author
+  - type: has_one
+    target: MediaItem
+    via: featured_media
+- name: MediaItem
+  collection: /wp/v2/media
+  count_observed: 224
+  description: An uploaded attachment — logos, leadership headshots, document assets.
+  key_fields: [id, slug, title, source_url, mime_type, media_type, media_details, filename, filesize, alt_text, caption, post, author]
+  relationships:
+  - type: belongs_to
+    target: Post
+    via: post
+    note: The object the attachment was uploaded to. Polymorphic — may reference a page or a custom post type.
+  - type: belongs_to
+    target: User
+    via: author
+- name: BoardMember
+  collection: /wp/v2/board-member
+  count_observed: 8
+  description: A member of the MBrace Therapeutics board of directors.
+  custom_post_type: true
+  key_fields: [id, slug, title, content, excerpt, parent, featured_media, categories]
+  detail: >-
+    `title.rendered` carries the name with post-nominals (observed: "Fabian Zohren, MD, PhD");
+    `content.rendered` carries the biography HTML; `featured_media` resolves to the headshot.
+  relationships:
+  - type: has_one
+    target: MediaItem
+    via: featured_media
+  - type: has_many
+    target: Category
+    via: categories
+- name: ExecutiveCommitteeMember
+  collection: /wp/v2/executive-committee
+  count_observed: 8
+  description: A company officer on the executive committee.
+  custom_post_type: true
+  key_fields: [id, slug, title, content, excerpt, featured_media, categories]
+  relationships:
+  - type: has_one
+    target: MediaItem
+    via: featured_media
+  - type: has_many
+    target: Category
+    via: categories
+- name: Founder
+  collection: /wp/v2/founders
+  count_observed: 2
+  description: >-
+    A company co-founder. Observed at harvest time: Renata Pasqualini, Ph.D. and Isan Chen, MD.
+  custom_post_type: true
+  key_fields: [id, slug, title, content, excerpt, parent, featured_media, categories]
+  relationships:
+  - type: has_one
+    target: MediaItem
+    via: featured_media
+  - type: has_many
+    target: Category
+    via: categories
+- name: Investor
+  collection: /wp/v2/investor
+  count_observed: 5
+  description: >-
+    A named institutional backer. Observed at harvest time: Blue Owl Capital, Avidity Partners, TPG,
+    Venrock and Alta Partners.
+  custom_post_type: true
+  key_fields: [id, slug, title, content, featured_media]
+  detail: >-
+    The only one of the five custom types NOT attached to the category taxonomy, and the only one
+    with no `excerpt` field in its response. `featured_media` resolves to the investor's logo.
+  relationships:
+  - type: has_one
+    target: MediaItem
+    via: featured_media
+- name: ScientificBoardMember
+  collection: /wp/v2/scientific-board
+  count_observed: 5
+  description: A member of the scientific advisory board — clinical and translational oncology advisers.
+  custom_post_type: true
+  key_fields: [id, slug, title, content, excerpt, parent, featured_media, meta]
+  relationships:
+  - type: has_one
+    target: MediaItem
+    via: featured_media
+- name: Category
+  collection: /wp/v2/categories
+  count_observed: 4
+  description: A category term.
+  key_fields: [id, slug, name, description, parent, count, taxonomy, link]
+  detail: >-
+    Unusually, this taxonomy is registered against FOUR post types — post, board-member,
+    executive-committee and founders — so it is the shared classifier spanning the news archive and
+    the people collections, not just a blog taxonomy.
+  relationships:
+  - type: belongs_to
+    target: Category
+    via: parent
+    note: Self-referential hierarchy.
+- name: Tag
+  collection: /wp/v2/tags
+  count_observed: 0
+  description: A post_tag term. Registered and reachable, but the collection is empty.
+- name: User
+  collection: /wp/v2/users
+  count_observed: 3
+  description: >-
+    A content author. Anonymously readable on this deployment — display fields only (name, slug,
+    description, link, avatar_urls). No email addresses or capabilities are exposed.
+  key_fields: [id, slug, name, description, link, avatar_urls]
+- name: SearchResult
+  collection: /wp/v2/search
+  count_observed: 76
+  description: >-
+    A lightweight reference, not a stored entity. {id, title, url, type, subtype} — the resolver
+    between a query string and the typed collections above.
+  relationships:
+  - type: polymorphic_reference
+    target: any
+    via: id + subtype
+graph_notes:
+- >-
+  The five custom post types are the reason this profile exists. A clinical-stage biotech that
+  publishes its board, executive committee, founders, named investors and scientific advisory board
+  as five separate JSON collections is emitting a machine-readable governance and cap-table
+  disclosure, whether or not it meant to.
+- >-
+  The graph is shallow and read-only. There are no join entities, no write paths, no state machines
+  and no lifecycle transitions — every relationship is a single-hop id reference resolved with a
+  second GET.
+- >-
+  The `acf` (Advanced Custom Fields) bridge is active on every entity above but returned an EMPTY
+  array on all of them on 2026-08-25. That is the model's biggest gap: whatever structured fields
+  the site editors use to render titles, roles and affiliations are NOT exposed through the API, so
+  a consumer must parse `title.rendered` and `content.rendered` HTML to recover them.
+- >-
+  No entity carries an MBRC programme identifier. The pipeline candidates (MBRC-101, MBRC-201,
+  MBRC-301, MBRC-401) exist only as page content, not as a modelled entity — there is no
+  /wp/v2/pipeline or /wp/v2/program collection. An agent wanting pipeline data must read the Pages
+  API and parse HTML.
+cross_links:
+  conventions: conventions/mbrace-therapeutics-conventions.yml
+  errors: errors/mbrace-therapeutics-problem-types.yml

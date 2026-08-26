@@ -1,0 +1,33 @@
+generated: '2026-08-25'
+method: searched
+source: https://mbracetrx.com/ full site walk 2026-08-25 (sitemap_index.xml + all 12 published pages)
+note: >-
+  MBrace Therapeutics publishes no API plans, no pricing page, no free tier, no enterprise tier and
+  no "contact sales" flow for API access — because it sells no API. It is a clinical-stage
+  biopharmaceutical company; its commercial surface is drug development, not software. The content
+  API catalogued in this repo is an unpriced, unmetered, unadvertised side effect of its marketing
+  CMS, available anonymously to anyone.
+plan_count: 0
+plans: []
+pricing_page: null
+free_tier:
+  exists: false
+  detail: >-
+    Not applicable. There is no account, no signup, no key and therefore no tier. Every catalogued
+    operation is anonymously readable at no cost.
+commercial_model:
+  api_monetized: false
+  signup_required: false
+  detail: >-
+    No /pricing, /plans, /developer or /signup page exists on mbracetrx.com — the published page set
+    is Home, About Us, Pipeline, Discovery Platform, the MBRC-101 and MBRC-201 programme pages,
+    Expanded Access Statement, Contact, Terms of Use and Privacy Policy. The company's disclosed
+    capital is investment rather than API revenue: an $85M Series B led by TPG (announced November
+    2023) on top of a Series A, for $110M total raised.
+pages_probed:
+- url: https://mbracetrx.com/
+  status: 200
+- url: https://mbracetrx.com/contact/
+  status: 200
+- url: https://mbracetrx.com/pipeline/
+  status: 200

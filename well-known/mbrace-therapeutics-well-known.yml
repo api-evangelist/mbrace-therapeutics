@@ -1,0 +1,56 @@
+generated: '2026-08-25'
+method: probed
+source: live anonymous probes of https://mbracetrx.com on 2026-08-25
+note: >-
+  Every /.well-known/ path probed on the single host in this profile returned a genuine HTTP 404.
+  MBrace Therapeutics serves no discovery, security or agent document at any well-known location.
+  This host is NOT a soft-404 catch-all: the control probe below (a path that cannot exist) returned
+  404 with the same WordPress 404 page, and every recorded 404 is a real status code, not a 200
+  carrying an HTML shell. Because nothing returned a 200 carrying a real document, NO `WellKnown`
+  and NO `SecurityTxt` pointer is emitted in apis.yml — this file records a measured absence, and a
+  recorded absence must never be scored as a presence.
+hit_count: 0
+hosts:
+- host: https://mbracetrx.com
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+    file: null
+  - path: /.well-known/openid-configuration
+    status: 404
+    file: null
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+    file: null
+  - path: /.well-known/oauth-protected-resource
+    status: 404
+    file: null
+  - path: /.well-known/api-catalog
+    status: 404
+    file: null
+  - path: /.well-known/ai-plugin.json
+    status: 404
+    file: null
+  - path: /.well-known/agent-card.json
+    status: 404
+    file: null
+  - path: /.well-known/agent.json
+    status: 404
+    file: null
+soft_404_control:
+  path: /.well-known/definitely-not-here-12345
+  status: 404
+  bytes: 49059
+  detail: >-
+    A path that cannot exist returned 404, confirming the host does not answer 200 for arbitrary
+    /.well-known/* paths. Two distinct 404 bodies were observed: a 548-byte plain nginx/WP Engine
+    404 for /.well-known/security.txt and /security.txt, and the 49,059-byte Elementor-rendered
+    WordPress 404 page for the remaining paths. Both carry status 404.
+legacy_paths_checked:
+- path: /security.txt
+  status: 404
+related:
+  root_discovery: >-
+    The deployment DOES serve a machine-readable discovery document, but at the WordPress REST root
+    (https://mbracetrx.com/wp-json/), not under /.well-known/. See
+    openapi/mbrace-therapeutics-discovery-openapi.yml.

@@ -1,0 +1,118 @@
+generated: '2026-08-25'
+method: derived
+source: openapi/ (9 documents) + live response inspection of https://mbracetrx.com/wp-json 2026-08-25
+note: >-
+  Standards conformance of the MBrace Therapeutics content API, asserted only where it was verified
+  against the live deployment. MBrace publishes no compliance program, no certifications and no
+  trust center, so NO `Compliance` and NO `TrustCenter` pointer is emitted in apis.yml. This is a
+  clinical-stage biopharmaceutical company whose only public API surface is its marketing CMS — the
+  regulated data standards of its own sector (HL7 FHIR, CDISC SDTM/ADaM, ICH E6) govern its clinical
+  operations, not this content surface, and none of them appear here.
+conformance:
+- id: openapi
+  conforms: true
+  version: 3.2.0
+  evidence: >-
+    Nine OpenAPI 3.2.0 documents in openapi/, derived by API Evangelist from the live route index.
+    NOTE the provider does NOT publish these — MBrace Therapeutics serves no OpenAPI of its own.
+    This entry records that a machine-readable contract now exists for the surface, not that the
+    company authored one.
+  authored_by: api-evangelist
+- id: rest
+  conforms: true
+  evidence: >-
+    Resource-oriented URIs, GET semantics, JSON representations, HTTP status codes used correctly
+    (200/400/401/403/404 all observed with matching bodies).
+- id: rfc8288
+  conforms: true
+  evidence: >-
+    Link header with rel="next" observed on GET /wp-json/wp/v2/posts?per_page=2 —
+    <https://mbracetrx.com/wp-json/wp/v2/posts?per_page=2&page=2>; rel="next".
+- id: hal
+  conforms: partial
+  evidence: >-
+    Every resource carries a `_links` object with self, collection, about, author and term relations
+    in HAL-like shape, and `_embed` inlines them under `_embedded`. It is WordPress's own link
+    convention rather than strict application/hal+json — the media type is application/json.
+- id: oembed
+  conforms: true
+  version: '1.0'
+  evidence: >-
+    /wp-json/oembed/1.0/embed returned a valid oEmbed 1.0 rich response for https://mbracetrx.com/
+    on 2026-08-25, carrying version, provider_name, provider_url, author_name, author_url, title,
+    type, width, height and html.
+- id: cors
+  conforms: true
+  evidence: >-
+    Access-Control-Allow-Headers and Access-Control-Expose-Headers (X-WP-Total, X-WP-TotalPages,
+    Link) returned on /wp-json responses.
+- id: rfc9457
+  conforms: false
+  evidence: >-
+    Errors use the WordPress envelope {code, message, data:{status}} with media type
+    application/json. No `type` URI, no application/problem+json. See
+    errors/mbrace-therapeutics-problem-types.yml.
+- id: oauth2
+  conforms: false
+  evidence: >-
+    No OAuth. /.well-known/oauth-authorization-server and /.well-known/oauth-protected-resource both
+    returned 404. The only advertised scheme is WordPress application passwords over HTTP Basic.
+- id: oidc
+  conforms: false
+  evidence: /.well-known/openid-configuration returned 404.
+- id: rfc9116
+  conforms: false
+  evidence: /.well-known/security.txt and /security.txt both returned 404.
+- id: idempotency
+  conforms: false
+  evidence: No idempotency key or replay contract. Read-only surface. See conventions/.
+- id: pagination
+  conforms: true
+  evidence: >-
+    page/per_page/offset with X-WP-Total and X-WP-TotalPages response headers, bounds enforced with
+    400 rest_invalid_param rather than silently clamped.
+- id: asyncapi
+  conforms: false
+  evidence: >-
+    No event, streaming or webhook surface. No AsyncAPI document, no /asyncapi.yaml, and no webhook
+    registration route in the 346-route index. N/A for this provider rather than a failure.
+- id: schema-org
+  conforms: true
+  evidence: >-
+    The Yoast SEO plugin inlines a schema.org JSON-LD graph in `yoast_head_json` on every post,
+    page, term, user and custom-post-type object, and renders the same graph into `yoast_head`. This
+    is the one structured-data vocabulary the deployment genuinely emits.
+domain_standard_conformance:
+  applicable: false
+  detail: >-
+    REWARD-ONLY check, correctly left empty. MBrace Therapeutics operates in clinical-stage oncology
+    drug development, a sector with real domain standards — HL7 FHIR and CDISC SDTM/ADaM for trial
+    data, ICH E6(R3) for trial conduct, IDMP for product identification, and CT.gov / EudraCT
+    registration schemas for trial disclosure. NONE of them are declared, referenced or shaped for
+    anywhere in this contract, and that is expected: this is a marketing-site content API, not a
+    clinical data interface. The company's own trial data moves through its CRO and regulatory
+    channels, which are not public surfaces. Nothing is invented to fill this slot.
+  probed_for:
+  - urn:ietf:params:scim
+  - $metadata (OData)
+  - FHIR CapabilityStatement / /metadata
+  - HL7v2 / X12 / EDIFACT message types
+  - CDISC ODM / Define-XML
+  result: none present
+regulatory_context:
+  regime: life-sciences
+  detail: >-
+    MBrace Therapeutics is subject to FDA and ICH clinical-trial regulation as a sponsor, and it
+    publishes an Expanded Access Statement at https://mbracetrx.com/expanded-access-statement/ as
+    21st Century Cures Act section 3032 requires of investigational-drug sponsors. That is a
+    regulatory disclosure obligation met on the website, not an API compliance program, and it is
+    recorded here as context rather than scored as one.
+  expanded_access_statement: https://mbracetrx.com/expanded-access-statement/
+compliance_program:
+  published: false
+  certifications: []
+  trust_center: false
+  detail: >-
+    No SOC 2, ISO 27001, HIPAA, GDPR-programme or FedRAMP claim is published anywhere on
+    mbracetrx.com, and probe-security-programs.py found no trust center and no vulnerability
+    disclosure programme. No `Compliance` pointer emitted.

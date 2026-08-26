@@ -1,0 +1,75 @@
+generated: '2026-08-25'
+method: searched
+source: >-
+  https://mbracetrx.com/ site search 2026-08-25 + the live route index at https://mbracetrx.com/wp-json/
+note: >-
+  MBrace Therapeutics publishes no API versioning policy, no deprecation policy, no SLA, no status
+  page and no API changelog, because it publishes no API program. This file records those absences
+  as measured facts. NO `StatusPage` and NO `Deprecation` pointer is emitted in apis.yml — neither
+  exists, and a pointer would assert a page the company does not serve.
+versioning:
+  scheme: uri-path-namespace
+  current: wp/v2
+  namespaces_registered: 17
+  detail: >-
+    The API version is the WordPress REST namespace carried in the path (wp/v2, oembed/1.0). MBrace
+    Therapeutics does not author or version this contract — it moves when WordPress core, the
+    Elementor page builder, Yoast SEO, Advanced Custom Fields and the WP Engine plugins move
+    underneath it. There is no company-controlled version, no version negotiation header and no
+    published upgrade path.
+  provider_controlled: false
+deprecation_policy:
+  published: false
+  sunset_header: false
+  deprecation_header: false
+  rfc8594: false
+  detail: >-
+    No Sunset or Deprecation response header was observed on any probed endpoint, and no deprecation
+    policy page exists on mbracetrx.com. No operation in openapi/ carries `deprecated: true`.
+  deprecated_operations: []
+status_page:
+  published: false
+  probed:
+  - url: https://status.mbracetrx.com
+    result: NXDOMAIN
+  detail: >-
+    No status page. status.mbracetrx.com does not resolve, and no statuspage.io, instatus or
+    better-uptime property is linked from the site. Uptime for this surface is whatever WP Engine
+    and Cloudflare provide, and neither is disclosed to the public by MBrace.
+sla:
+  published: false
+  detail: No service level agreement, uptime commitment or support-response commitment is published for this surface.
+changelog:
+  published: false
+  detail: >-
+    No API changelog. The company publishes a news archive at https://mbracetrx.com/news/ (also
+    readable as JSON via the News API in this repo), but it carries corporate and clinical news —
+    financings, trial milestones, conference presentations and appointments — not API changes. The
+    most recent item at harvest time was dated 2025-07-04.
+  content_recency:
+    latest_news_post: '2025-07-04'
+    news_post_count: 8
+    latest_page_modified: '2026-04-08'
+    detail: >-
+      Read from the live collections on 2026-08-25. The pages collection is materially fresher than
+      the news collection — corporate pages were revised in April 2026 while the last news post is
+      from July 2025.
+support:
+  developer_support: false
+  general_contact: https://mbracetrx.com/contact/
+  detail: >-
+    There is no developer support channel, no community forum, no issue tracker and no GitHub
+    organisation (github.com/mbracetrx, /mbrace-therapeutics and /mbracetx all return 404, and a
+    GitHub user search for "mbrace therapeutics" returned zero results). The only contact route is
+    the general corporate contact form.
+stability_assessment:
+  grade: incidental
+  detail: >-
+    This surface is a side effect of the company's marketing CMS, not a product. It is stable in
+    practice because the site is stable, but nothing about it is committed to: the routes can change
+    with any plugin update, the ACF bridge could begin or stop exposing fields, and the company has
+    made no statement that the surface exists at all. Treat it as observational data with no
+    stability guarantee.
+cross_links:
+  conventions: conventions/mbrace-therapeutics-conventions.yml
+  conformance: conformance/mbrace-therapeutics-conformance.yml

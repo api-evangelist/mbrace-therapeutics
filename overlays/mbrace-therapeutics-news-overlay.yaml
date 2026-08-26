@@ -1,0 +1,52 @@
+overlay: 1.0.0
+info:
+  title: MBrace Therapeutics News API — API Evangelist enhancements
+  version: 1.0.0
+extends: ../openapi/mbrace-therapeutics-news-openapi.yml
+x-api-evangelist:
+  generated: '2026-08-25'
+  method: generated
+  source: openapi/mbrace-therapeutics-news-openapi.yml + live observation of https://mbracetrx.com/wp-json 2026-08-25
+  note: >-
+    Captures the API Evangelist enhancements applied on top of the harvested contract. The original
+    OpenAPI is never mutated. Note the base document is itself an API Evangelist derivation — MBrace
+    Therapeutics publishes no OpenAPI — so this overlay records the SECOND layer: the operational
+    guidance a consumer needs that is not expressible as route-index metadata.
+actions:
+- target: $.info
+  description: Record that the provider publishes no contract of its own and that this one is independently derived.
+  update:
+    x-contract-origin: api-evangelist-derived
+    x-provider-publishes-openapi: false
+    x-harvest-date: '2026-08-25'
+- target: $.paths['/wp/v2/posts'].get
+  description: Add measured collection size and pacing guidance to the list operation.
+  update:
+    x-collection-size-observed: 8
+    x-collection-latest-item: '2025-07-04'
+    x-recommended-request-interval-seconds: 10
+    x-cache-ttl-seconds: 600
+    x-refresh-guidance: >-
+      Content changes a handful of times per year. A daily poll is generous; anything faster spends
+      requests against a 600-second cache and risks the unsignalled Cloudflare edge control
+      documented in rate-limits/mbrace-therapeutics-rate-limits.yml.
+- target: $.paths['/wp/v2/posts'].get
+  description: Flag the field-selection lever, which materially changes response weight.
+  update:
+    x-field-selection: >-
+      Supports _fields, _embed and _envelope. Sending _fields=id,slug,title,date,link reduces a page
+      of this collection from tens of kilobytes to under two.
+- target: $.components.schemas.Post
+  description: Record the ACF gap on the response schema itself, where a consumer will meet it.
+  update:
+    x-acf-bridge-active: true
+    x-acf-payload-empty: true
+    x-acf-note: >-
+      The Advanced Custom Fields REST bridge is active and the `acf` key is present on every object,
+      but it returned an EMPTY array on 2026-08-25. Any structured field the editors use is not
+      exposed; recover it by parsing content.rendered HTML or not at all.
+- target: $.components.schemas.Error
+  description: Point the error schema at the probed catalogue rather than leaving it inline-only.
+  update:
+    x-error-catalog: errors/mbrace-therapeutics-problem-types.yml
+    x-rfc9457: false

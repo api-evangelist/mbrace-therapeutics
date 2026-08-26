@@ -1,0 +1,62 @@
+overlay: 1.0.0
+info:
+  title: MBrace Therapeutics People API — API Evangelist enhancements
+  version: 1.0.0
+extends: ../openapi/mbrace-therapeutics-people-openapi.yml
+x-api-evangelist:
+  generated: '2026-08-25'
+  method: generated
+  source: openapi/mbrace-therapeutics-people-openapi.yml + live observation of https://mbracetrx.com/wp-json 2026-08-25
+  note: >-
+    Enhancements over the harvested contract for the five custom post types. This is the surface
+    worth annotating: the company registered these types itself, so unlike the WordPress core
+    collections they carry MBrace-specific meaning that the route index does not describe.
+actions:
+- target: $.info
+  description: Record contract origin and why this surface is distinctive.
+  update:
+    x-contract-origin: api-evangelist-derived
+    x-provider-publishes-openapi: false
+    x-harvest-date: '2026-08-25'
+    x-significance: >-
+      Five company-registered custom post types publish MBrace Therapeutics' board, executive
+      committee, founders, named investors and scientific advisory board as structured JSON. This is
+      a machine-readable governance and backer disclosure produced as a side effect of the marketing
+      CMS.
+- target: $.paths['/wp/v2/board-member'].get
+  update:
+    x-collection-size-observed: 8
+- target: $.paths['/wp/v2/executive-committee'].get
+  update:
+    x-collection-size-observed: 8
+- target: $.paths['/wp/v2/founders'].get
+  update:
+    x-collection-size-observed: 2
+- target: $.paths['/wp/v2/investor'].get
+  description: Record the observed investor set and the schema asymmetry on this type.
+  update:
+    x-collection-size-observed: 5
+    x-taxonomy-attached: false
+    x-note: >-
+      The only one of the five types NOT attached to the category taxonomy, and the only one with no
+      `excerpt` field. featured_media resolves to the investor's logo.
+- target: $.paths['/wp/v2/scientific-board'].get
+  update:
+    x-collection-size-observed: 5
+- target: $.components.schemas.BoardMember
+  description: Tell a consumer where the person data actually lives, since ACF exposes nothing.
+  update:
+    x-acf-bridge-active: true
+    x-acf-payload-empty: true
+    x-name-field: title.rendered
+    x-biography-field: content.rendered
+    x-headshot: 'Resolve featured_media against /wp/v2/media/{id} for source_url, or send _embed.'
+    x-parsing-note: >-
+      Names arrive with post-nominals inline (observed: "Fabian Zohren, MD, PhD"). There is no
+      separate role, title or affiliation field — those are inside the biography HTML.
+- target: $.components.schemas.Investor
+  update:
+    x-acf-bridge-active: true
+    x-acf-payload-empty: true
+    x-name-field: title.rendered
+    x-logo: 'Resolve featured_media against /wp/v2/media/{id}.'

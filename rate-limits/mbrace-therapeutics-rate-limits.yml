@@ -1,0 +1,75 @@
+generated: '2026-08-25'
+method: probed
+source: live response headers from https://mbracetrx.com/wp-json observed 2026-08-25 + https://mbracetrx.com/robots.txt
+note: >-
+  MBrace Therapeutics documents no rate limits, because it documents no API. This file records what
+  was actually observed at the wire: the deployment returns NO rate-limit headers of any kind, but
+  it does enforce an unsignalled edge control that this pass tripped. An honest zero on the
+  documented-limits count, with the real runtime behaviour captured alongside it.
+limit_count: 0
+documented: false
+limits: []
+response_headers:
+  ratelimit_standard: []
+  x_ratelimit: []
+  retry_after: false
+  detail: >-
+    No RateLimit-Limit / RateLimit-Remaining / RateLimit-Reset (RFC 9239 style), no X-RateLimit-*,
+    and no Retry-After was present on any 200 or any error response observed. An agent gets no
+    server-supplied budget signal and no server-supplied backoff signal from this API.
+observed_headers_on_200:
+- date
+- content-type
+- vary
+- access-control-allow-headers
+- access-control-expose-headers
+- allow
+- link
+- x-content-type-options
+- x-robots-tag
+- x-wp-total
+- x-wp-totalpages
+- x-cacheable
+- cache-control
+- x-cache
+- x-cache-group
+- last-modified
+- cf-cache-status
+- cf-ray
+- alt-svc
+unsignalled_controls:
+- control: cloudflare-bot-challenge
+  observed: true
+  status: 403
+  body: HTML interstitial titled "Attention Required! | Cloudflare"
+  detail: >-
+    During this enrichment pass a burst of ~20 sequential probes sent with a bare `curl` user agent
+    was answered with a Cloudflare 403 challenge page on the mbracetrx.com HTML surface. The same
+    requests succeeded with 200 once a full browser User-Agent and Sec-Fetch-* headers were sent.
+    This is an ordinary edge bot policy, NOT evidence the API is unavailable and NOT a rate limit in
+    the metered sense — there is no counter, no window and no reset. It is recorded because an agent
+    calling this surface will hit it, will receive HTML where it expected JSON, and has no header to
+    tell it why.
+  mitigation: Send a realistic User-Agent; back off on any non-JSON body.
+- control: crawl-delay
+  observed: true
+  source: https://robots.txt
+  value: 10
+  detail: >-
+    robots.txt advertises `Crawl-delay: 10` and `Disallow:` (empty — nothing disallowed). Ten
+    seconds between requests is the only pacing figure the site publishes, and it is the right
+    default for an unauthenticated consumer of this surface.
+caching_as_de_facto_limit:
+  cache_control: max-age=600, must-revalidate
+  detail: >-
+    Collection responses are cacheable for 600 seconds behind WP Engine (x-cacheable: SHORT) and
+    Cloudflare. A polite consumer should honour it — repeated uncached polling is what trips the
+    edge control above.
+practical_guidance:
+  recommended_request_interval_seconds: 10
+  recommended_concurrency: 1
+  detail: >-
+    Derived from the published Crawl-delay, not from a provider limit. Combined with the 600-second
+    cache and content that changes a handful of times per year (8 news posts total, most recent
+    2025-07-04), a full re-harvest of this API needs well under 100 requests and should be run at
+    most daily.

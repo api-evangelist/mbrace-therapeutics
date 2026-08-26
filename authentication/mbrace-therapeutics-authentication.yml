@@ -1,0 +1,87 @@
+generated: '2026-08-25'
+method: probed
+source: https://mbracetrx.com/wp-json/ (authentication block + live anonymous responses, 2026-08-25)
+note: >-
+  MBrace Therapeutics publishes no authentication documentation of its own — there is no developer
+  portal and no API reference. Everything below was read from the live deployment: the
+  `authentication` block of the WordPress REST discovery document, and the actual status codes
+  returned to unauthenticated requests. The derive-authentication.py pass produced no profile because
+  none of the harvested OpenAPI documents declare a `securitySchemes` block, and that is correct
+  rather than a gap: every operation catalogued in openapi/ is anonymously readable and requires no
+  credential at all.
+summary:
+  anonymous_read: true
+  credential_required_for_catalogued_operations: false
+  schemes_advertised:
+  - application-passwords
+  detail: >-
+    All 28 catalogued operations are anonymous GETs. No API key, no bearer token, no OAuth, no
+    mutual TLS. The only credential scheme the deployment advertises is WordPress application
+    passwords, which is an administrative credential for the WordPress backend, not a consumer API
+    credential — it cannot be self-issued and there is no signup flow for it.
+schemes:
+- id: none
+  type: none
+  applies_to: >-
+    Every operation in openapi/ — the news, people, pages, media, taxonomy, search, discovery, users
+    and oEmbed surfaces.
+  detail: >-
+    Verified live on 2026-08-25: GET https://mbracetrx.com/wp-json/wp/v2/posts returned 200 with no
+    Authorization header, no cookie and no nonce.
+- id: application-passwords
+  type: http
+  scheme: basic
+  advertised_at: https://mbracetrx.com/wp-json/
+  authorization_endpoint: https://mbracetrx.com/wp-admin/authorize-application.php
+  applies_to: >-
+    The write surface and the authenticated administration namespaces. NOT catalogued in openapi/ —
+    they were confirmed gated and were never exercised.
+  self_service: false
+  detail: >-
+    The discovery document advertises `authentication.application-passwords.endpoints.authorization`.
+    This is WordPress core's per-user application-password mechanism, sent as HTTP Basic. It is
+    issued from inside wp-admin by an already-authenticated user; there is no public registration,
+    no key management page and no documented scope model. It is not an API product.
+gated_surfaces_observed:
+- path: /wp-json/wp/v2/settings
+  status: 401
+  code: rest_forbidden
+- path: /wp-json/wp/v2/menus
+  status: 401
+  code: rest_cannot_view
+- path: /wp-json/wp/v2/plugins
+  status: 401
+  code: rest_cannot_view_plugins
+- path: /wp-json/wp/v2/themes
+  status: 401
+  code: rest_cannot_view_themes
+- path: /wp-json/wp-abilities/v1/abilities
+  status: 401
+  code: rest_forbidden
+  detail: >-
+    The WordPress Abilities API namespace is registered on this deployment but returns 401
+    anonymously. See mcp/mbrace-therapeutics-mcp.yml — this is the closest thing to an agent-tool
+    surface here, and it is not open.
+- path: /wp-json/wp/v2/comments
+  status: 403
+  code: rest_comment_disabled
+  detail: Comments are disabled site-wide, so this collection is unreachable rather than credential-gated.
+context_escalation:
+  param: context
+  anonymous_values:
+  - view
+  - embed
+  gated_values:
+  - edit
+  detail: 'context=edit returns 401 rest_forbidden for an unauthenticated caller.'
+transport:
+  https_only: true
+  tls_version: TLSv1.3
+  hsts: false
+  detail: >-
+    HTTPS is enforced at the edge (Cloudflare in front of WP Engine), but no Strict-Transport-Security
+    header is returned. See security/mbrace-therapeutics-domain-security.yml.
+cross_links:
+  conventions: conventions/mbrace-therapeutics-conventions.yml
+  errors: errors/mbrace-therapeutics-problem-types.yml
+  domain_security: security/mbrace-therapeutics-domain-security.yml

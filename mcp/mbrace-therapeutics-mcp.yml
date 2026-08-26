@@ -1,0 +1,107 @@
+generated: '2026-08-25'
+method: derived
+source: >-
+  openapi/ (9 documents, 28 operations) + live probes of https://mbracetrx.com on 2026-08-25
+status: candidate
+note: >-
+  MBrace Therapeutics ships NO MCP server — not a hosted remote endpoint, not an stdio package, not
+  a published tool manifest. The tools below are an API Evangelist CANDIDATE derivation from the
+  OpenAPI operations harvested in this repo; they describe what an MCP server over this surface
+  could expose, and nothing here is served by the provider. NO `MCPServer` pointer is emitted in
+  apis.yml: that pointer asserts the provider runs a server, it is worth 12 points on the agent
+  readiness score plus 4 on ergonomics, and MBrace has not earned it. Never invent an endpoint URL
+  for this provider.
+deployment:
+  mode: none
+  endpoint: null
+  install: null
+  package: null
+  auth: none
+  verified: probed
+  detail: >-
+    mode `none` because no server exists in either form. Probed and confirmed absent on 2026-08-25:
+    POST https://mbracetrx.com/mcp -> 404, POST https://mbracetrx.com/wp-json/mcp/v1 -> 404, POST
+    https://mbracetrx.com/sse -> 404, all with a tools/list JSON-RPC body and
+    Accept: application/json, text/event-stream. mcp.mbracetrx.com does not resolve (NXDOMAIN). No
+    npm or PyPI package exists (see packages/). `auth: none` describes the underlying API, which is
+    anonymous, not a server that does not exist.
+adjacent_finding:
+  namespace: wp-abilities/v1
+  registered: true
+  anonymous_status: 401
+  detail: >-
+    Worth recording because it is the closest thing to an agent-tool surface on this deployment and
+    it is easy to misread as an MCP hit. The WordPress Abilities API namespace IS registered here —
+    /wp-json/wp-abilities/v1/abilities, /categories and an /abilities/{name}/run execution route all
+    appear in the route index. The Abilities API is WordPress core's tool-registry primitive, the
+    substrate the official WordPress MCP adapter builds on. On this deployment it is fully
+    401-gated: GET /wp-json/wp-abilities/v1/abilities returned
+    {"code":"rest_forbidden","message":"Sorry, you are not allowed to do that.","data":{"status":401}}
+    anonymously. So the plumbing for an agent surface is present by virtue of the WordPress version
+    installed, no ability list is readable without credentials, and MBrace Therapeutics has taken no
+    action to expose one. It is not an MCP server and must not be counted as one.
+  probed_at: '2026-08-25'
+candidate_tools:
+  count: 9
+  binding: >-
+    Each candidate below maps 1:1 onto an operationId that exists in this repo's openapi/ directory.
+    Any implementer inherits that operation's real parameters as the tool inputSchema.
+  tools:
+  - name: search_mbrace_content
+    description: Search across every published object on mbracetrx.com and return {id, title, url, type, subtype} references.
+    rest: [searchContent]
+    spec: openapi/mbrace-therapeutics-search-openapi.yml
+    rationale: The correct entry point — an agent rarely knows an integer id up front.
+  - name: list_mbrace_news
+    description: List MBrace Therapeutics news posts — press releases, conference presentations and publications.
+    rest: [listNews, getNewsPost]
+    spec: openapi/mbrace-therapeutics-news-openapi.yml
+  - name: list_mbrace_board
+    description: List the MBrace Therapeutics board of directors.
+    rest: [listBoardMembers, getBoardMember]
+    spec: openapi/mbrace-therapeutics-people-openapi.yml
+  - name: list_mbrace_executives
+    description: List the MBrace Therapeutics executive committee.
+    rest: [listExecutiveCommittee, getExecutiveCommitteeMember]
+    spec: openapi/mbrace-therapeutics-people-openapi.yml
+  - name: list_mbrace_founders
+    description: List the MBrace Therapeutics co-founders.
+    rest: [listFounders, getFounder]
+    spec: openapi/mbrace-therapeutics-people-openapi.yml
+  - name: list_mbrace_investors
+    description: List the named institutional investors in MBrace Therapeutics.
+    rest: [listInvestors, getInvestor]
+    spec: openapi/mbrace-therapeutics-people-openapi.yml
+  - name: list_mbrace_scientific_board
+    description: List the MBrace Therapeutics scientific advisory board.
+    rest: [listScientificBoard, getScientificBoardMember]
+    spec: openapi/mbrace-therapeutics-people-openapi.yml
+  - name: get_mbrace_page
+    description: Fetch a corporate page — About Us, Pipeline, Discovery Platform, the MBRC-101/MBRC-201 programme pages.
+    rest: [listPages, getPage]
+    spec: openapi/mbrace-therapeutics-pages-openapi.yml
+    caveat: >-
+      Page bodies are Elementor-rendered HTML and are large — a single page was ~200KB on the wire at
+      harvest time. Any implementation must pass _fields or strip content.rendered before returning
+      it to a model context.
+  - name: get_mbrace_media
+    description: Resolve a media attachment id to its direct file URL and dimensions.
+    rest: [listMedia, getMediaItem]
+    spec: openapi/mbrace-therapeutics-media-openapi.yml
+  excluded_from_candidates:
+  - operations: [listUsers, getUser]
+    reason: >-
+      Anonymously readable, but it is author-enumeration data on a private company's staff. Left out
+      of the candidate tool set deliberately rather than by oversight.
+  - operations: [getApiIndex, listTypes, listTaxonomies, listStatuses, listCategories, listTags, getOembed]
+    reason: Discovery and plumbing routes. Useful to an implementer, not to an agent answering a question.
+crosswalk:
+  emitted: false
+  reason: >-
+    No tool crosswalk is written. A crosswalk binds a REAL MCP tool set (or GraphQL schema) to
+    backing OpenAPI operations; there is no MCP server and no GraphQL endpoint here, so a crosswalk
+    would be a table of our own inventions mapped to our own derivations. The candidate list above
+    already carries the operationId bindings.
+graphql:
+  present: false
+  detail: GET/POST https://mbracetrx.com/graphql returned 404. No GraphQL surface, so no SDL to introspect.

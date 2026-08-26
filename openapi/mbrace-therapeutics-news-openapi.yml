@@ -1,0 +1,507 @@
+openapi: 3.2.0
+info:
+  title: MBrace Therapeutics Content News API
+  version: wp/v2
+  summary: Anonymously readable WordPress REST content API behind mbracetrx.com.
+  description: The read-only content surface MBrace Therapeutics exposes at https://mbracetrx.com/wp-json.
+    MBrace Therapeutics is a privately held, clinical-stage biopharmaceutical company developing antibody-drug
+    conjugates (ADCs) against novel oncology targets, discovered with its SPARTA in vivo antibody selection
+    and target discovery platform. It runs no developer program and markets no product API. This document
+    covers the post collection, which on this deployment is the MBrace Therapeutics news and publications
+    archive.
+  contact:
+    name: MBrace Therapeutics
+    url: https://mbracetrx.com/
+  license:
+    name: Proprietary — no published API terms
+    url: https://mbracetrx.com/terms-of-use/
+  x-api-evangelist-provenance: 'Derived by the API Evangelist enrichment pipeline from the live WordPress
+    REST route index at https://mbracetrx.com/wp-json/ (346 routes across 17 namespaces) and verified
+    against live anonymous responses on 2026-08-25. Every query parameter below appears verbatim in that
+    route index''s `args` block for the endpoint it is attached to, every response field was read from
+    a real anonymous response body, and every collection count quoted in a description was read from the
+    `X-WP-Total` response header on that date. MBrace Therapeutics publishes no OpenAPI, no developer
+    portal, no API reference and no developer program for this surface; the humanURL in apis.yml points
+    at the upstream WordPress REST handbook that defines the wp/v2 contract. Write operations and the
+    authenticated administration surface (/wp/v2/settings, /wp/v2/menus, /wp/v2/themes, /wp/v2/plugins,
+    the elementor/*, yoast/v1, redirection/v1, string-locator/v1, wpe/* and wp-abilities/v1 namespaces)
+    are deliberately excluded — they returned 401 anonymously and were not exercised. The deployment is
+    served by WP Engine behind Cloudflare, page HTML is Elementor-rendered, and API responses carry `x-robots-tag:
+    noindex`. Nothing here was obtained with credentials.'
+servers:
+- url: https://mbracetrx.com/wp-json
+  description: Production content API
+tags:
+- name: news
+  description: Company news archive — press releases, scientific presentations and publications (8 published
+    at harvest time, spanning November 2023 through July 2025).
+paths:
+  /wp/v2/posts:
+    get:
+      tags:
+      - news
+      operationId: listNews
+      summary: List news posts
+      description: Lists published posts. On this deployment the collection is the company news archive
+        — 8 items covering the $85M Series B and emergence from stealth (Nov 2023), the SABCS 2023 and
+        AACR 2024 preclinical presentations, the Phase 1 first-patient-dosed announcement for MBRC-101,
+        the ASCO 2024 trial-in-progress poster, the Steve Alley CSO appointment, and the EphA5-targeted
+        ADC publication. Paginated; X-WP-Total and X-WP-TotalPages are exposed via Access-Control-Expose-Headers.
+      parameters:
+      - name: after
+        in: query
+        description: Limit response to posts published after a given ISO8601 compliant date.
+        schema:
+          type: string
+          format: date-time
+      - name: author
+        in: query
+        description: Limit result set to posts assigned to specific authors.
+        schema:
+          type: array
+          items:
+            type: integer
+      - name: author_exclude
+        in: query
+        description: Ensure result set excludes posts assigned to specific authors.
+        schema:
+          type: array
+          items:
+            type: integer
+      - name: before
+        in: query
+        description: Limit response to posts published before a given ISO8601 compliant date.
+        schema:
+          type: string
+          format: date-time
+      - name: categories
+        in: query
+        description: Limit result set to items with specific terms assigned in the categories taxonomy.
+        schema:
+          type: object
+      - name: categories_exclude
+        in: query
+        description: Limit result set to items except those with specific terms assigned in the categories
+          taxonomy.
+        schema:
+          type: object
+      - name: context
+        in: query
+        description: Scope under which the request is made; determines fields present in response.
+        schema:
+          type: string
+          enum:
+          - view
+          - embed
+          - edit
+          default: view
+      - name: exclude
+        in: query
+        description: Ensure result set excludes specific IDs.
+        schema:
+          type: array
+          items:
+            type: integer
+      - name: format
+        in: query
+        description: Limit result set to items assigned one or more given formats.
+        schema:
+          type: array
+          items:
+            type: string
+            enum:
+            - standard
+            - aside
+            - chat
+            - gallery
+            - link
+            - image
+            - quote
+            - status
+            - video
+            - audio
+      - name: ignore_sticky
+        in: query
+        description: Whether to ignore sticky posts or not.
+        schema:
+          type: boolean
+          default: true
+      - name: include
+        in: query
+        description: Limit result set to specific IDs.
+        schema:
+          type: array
+          items:
+            type: integer
+      - name: modified_after
+        in: query
+        description: Limit response to posts modified after a given ISO8601 compliant date.
+        schema:
+          type: string
+          format: date-time
+      - name: modified_before
+        in: query
+        description: Limit response to posts modified before a given ISO8601 compliant date.
+        schema:
+          type: string
+          format: date-time
+      - name: offset
+        in: query
+        description: Offset the result set by a specific number of items.
+        schema:
+          type: integer
+      - name: order
+        in: query
+        description: Order sort attribute ascending or descending.
+        schema:
+          type: string
+          enum:
+          - asc
+          - desc
+          default: desc
+      - name: orderby
+        in: query
+        description: Sort collection by post attribute.
+        schema:
+          type: string
+          enum:
+          - author
+          - date
+          - id
+          - include
+          - modified
+          - parent
+          - relevance
+          - slug
+          - include_slugs
+          - title
+          default: date
+      - name: page
+        in: query
+        description: Current page of the collection.
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+      - name: per_page
+        in: query
+        description: Maximum number of items to be returned in result set.
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 10
+      - name: search
+        in: query
+        description: Limit results to those matching a string.
+        schema:
+          type: string
+      - name: search_columns
+        in: query
+        description: Array of column names to be searched.
+        schema:
+          type: array
+          items:
+            type: string
+            enum:
+            - post_title
+            - post_content
+            - post_excerpt
+      - name: search_semantics
+        in: query
+        description: How to interpret the search input.
+        schema:
+          type: string
+          enum:
+          - exact
+      - name: slug
+        in: query
+        description: Limit result set to posts with one or more specific slugs.
+        schema:
+          type: array
+          items:
+            type: string
+      - name: status
+        in: query
+        description: Limit result set to posts assigned one or more statuses.
+        schema:
+          type: array
+          items:
+            type: string
+            enum:
+            - publish
+            - future
+            - draft
+            - pending
+            - private
+            - trash
+            - auto-draft
+            - inherit
+            - request-pending
+            - request-confirmed
+            - request-failed
+            - request-completed
+            - acf-disabled
+            - any
+          default: publish
+      - name: sticky
+        in: query
+        description: Limit result set to items that are sticky.
+        schema:
+          type: boolean
+      - name: tags
+        in: query
+        description: Limit result set to items with specific terms assigned in the tags taxonomy.
+        schema:
+          type: object
+      - name: tags_exclude
+        in: query
+        description: Limit result set to items except those with specific terms assigned in the tags taxonomy.
+        schema:
+          type: object
+      - name: tax_relation
+        in: query
+        description: Limit result set based on relationship between multiple taxonomies.
+        schema:
+          type: string
+          enum:
+          - AND
+          - OR
+      responses:
+        '200':
+          description: A page of news posts.
+          headers:
+            X-WP-Total:
+              description: Total number of matching items.
+              schema:
+                type: integer
+            X-WP-TotalPages:
+              description: Total number of pages available.
+              schema:
+                type: integer
+            Link:
+              description: RFC 8288 pagination links (rel="next" / rel="prev").
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Post'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+  /wp/v2/posts/(?P<id>[\d]+):
+    get:
+      tags:
+      - news
+      operationId: getNewsPost
+      summary: Get a news post
+      description: Retrieve a single published news post by its numeric identifier.
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: Unique identifier for the object.
+        schema:
+          type: integer
+      - name: context
+        in: query
+        description: Scope under which the request is made; determines fields present in response.
+        schema:
+          type: string
+          enum:
+          - view
+          - embed
+          - edit
+          default: view
+      - name: excerpt_length
+        in: query
+        description: Override the default excerpt length.
+        schema:
+          type: integer
+      - name: password
+        in: query
+        description: The password for the post if it is password protected.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: A news post.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+        '404':
+          $ref: '#/components/responses/NotFound'
+components:
+  schemas:
+    RenderedText:
+      type: object
+      description: WordPress rendered-text object.
+      properties:
+        rendered:
+          type: string
+          description: HTML for the object, transformed for display.
+        protected:
+          type: boolean
+          description: Whether the content is protected with a password.
+    Error:
+      type: object
+      description: The WordPress REST error envelope as returned by this deployment. Not RFC 9457 problem+json.
+      required:
+      - code
+      - message
+      - data
+      properties:
+        code:
+          type: string
+          description: Machine-readable error code.
+          examples:
+          - rest_post_invalid_id
+        message:
+          type: string
+          description: Human-readable error message.
+          examples:
+          - Invalid post ID.
+        data:
+          type: object
+          properties:
+            status:
+              type: integer
+              description: The HTTP status code.
+              examples:
+              - 404
+            params:
+              type: object
+              description: Per-parameter messages, present on rest_invalid_param.
+              additionalProperties:
+                type: string
+            details:
+              type: object
+              description: Per-parameter structured detail, present on rest_invalid_param.
+              additionalProperties:
+                type: object
+    Post:
+      type: object
+      description: A news post. Field set observed live on this deployment on 2026-08-25, including the
+        Yoast SEO and ACF extensions.
+      properties:
+        _links:
+          type: object
+          description: HAL-style link relations to self, collection, author, and assigned terms.
+        acf:
+          description: Advanced Custom Fields payload. The ACF-to-REST bridge is active on every content
+            type here, but it returned an EMPTY array on every collection sampled on 2026-08-25 — no custom
+            field group is exposed anonymously.
+          anyOf:
+          - type: object
+          - type: array
+            items: {}
+        author:
+          type: integer
+          description: The ID for the author of the object.
+        categories:
+          type: array
+          items:
+            type: integer
+          description: The terms assigned to the object in the category taxonomy.
+        class_list:
+          type: array
+          items:
+            type: string
+          description: The CSS class list WordPress would render for the object.
+        comment_status:
+          type: string
+          description: Whether or not comments are open on the object.
+        content:
+          allOf:
+          - $ref: '#/components/schemas/RenderedText'
+          description: The content for the object.
+        date:
+          type: string
+          format: date-time
+          description: The date the object was published, in the site's timezone.
+        date_gmt:
+          type: string
+          format: date-time
+          description: The date the object was published, as GMT.
+        excerpt:
+          allOf:
+          - $ref: '#/components/schemas/RenderedText'
+          description: The excerpt for the object.
+        featured_media:
+          type: integer
+          description: The ID of the featured media attachment.
+        format:
+          type: string
+          description: The format for the object.
+        guid:
+          allOf:
+          - $ref: '#/components/schemas/RenderedText'
+          description: The globally unique identifier for the object.
+        id:
+          type: integer
+          description: Unique identifier for the object.
+        link:
+          type: string
+          format: uri
+          description: URL to the object on the public site.
+        meta:
+          type: object
+          description: Registered meta fields. No custom keys are surfaced anonymously on this deployment.
+        modified:
+          type: string
+          format: date-time
+          description: The date the object was last modified, in the site's timezone.
+        modified_gmt:
+          type: string
+          format: date-time
+          description: The date the object was last modified, as GMT.
+        ping_status:
+          type: string
+          description: Whether or not the object can be pinged.
+        slug:
+          type: string
+          description: An alphanumeric identifier for the object unique to its type.
+        status:
+          type: string
+          description: A named status for the object. Anonymously only `publish` is returned.
+        sticky:
+          type: boolean
+          description: Whether or not the object should be treated as sticky.
+        tags:
+          type: array
+          items:
+            type: integer
+          description: The terms assigned to the object in the post_tag taxonomy. Empty on this deployment
+            — the post_tag taxonomy is registered but carries zero terms.
+        template:
+          type: string
+          description: The theme file used to display the object.
+        title:
+          allOf:
+          - $ref: '#/components/schemas/RenderedText'
+          description: The title for the object.
+        type:
+          type: string
+          description: Type of post for the object.
+        yoast_head:
+          type: string
+          description: Rendered Yoast SEO head markup for the object.
+        yoast_head_json:
+          type: object
+          description: Structured Yoast SEO metadata including a schema.org graph.
+  responses:
+    BadRequest:
+      description: Invalid parameter. Returns the WordPress REST error envelope with code rest_invalid_param.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: Object not found. Returns the WordPress REST error envelope.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'

@@ -1,0 +1,97 @@
+generated: '2026-08-25'
+method: probed
+source: live anonymous error responses from https://mbracetrx.com/wp-json observed 2026-08-25
+note: >-
+  MBrace Therapeutics publishes no error reference — there is no developer documentation for this
+  surface at all. Every entry below was produced by deliberately provoking the error against the
+  live deployment and recording the verbatim response body. The envelope is the WordPress REST error
+  shape, NOT RFC 9457 problem+json: there is no `type` URI and the media type is application/json.
+format: wordpress-rest
+rfc9457: false
+content_type: application/json
+envelope:
+  shape: '{ code: string, message: string, data: { status: int, params?: object, details?: object } }'
+  code: Machine-readable error identifier. This is the field to branch on — the message string is display text and is not stable.
+  message: Human-readable message.
+  data.status: The HTTP status code, repeated inside the body.
+  data.params: Present on rest_invalid_param — a map of parameter name to plain-language message.
+  data.details: Present on rest_invalid_param — a map of parameter name to a nested {code, message, data} object.
+problem_types:
+- code: rest_no_route
+  status: 404
+  title: No matching route
+  message: No route was found matching the URL and request method.
+  observed_at: GET /wp-json/wp/v2/nope-not-here
+  remediation: >-
+    Read the route index at /wp-json/ (or the discovery OpenAPI in this repo) and use a registered
+    route. Also returned when the route exists but not for the method used.
+- code: rest_post_invalid_id
+  status: 404
+  title: Invalid object identifier
+  message: Invalid post ID.
+  observed_at: GET /wp-json/wp/v2/posts/999999
+  remediation: >-
+    The identifier does not resolve to a published object of that type. Resolve identifiers through
+    /wp/v2/search or the relevant collection rather than guessing. Note the same 404 is returned for
+    an object that exists but is not published, so a 404 here does not prove non-existence.
+- code: rest_invalid_param
+  status: 400
+  title: Invalid parameter
+  message: 'Invalid parameter(s): per_page'
+  observed_at: GET /wp-json/wp/v2/posts?per_page=999
+  remediation: >-
+    Read data.details[<param>].message for the exact constraint. Bounds are enforced, not clamped —
+    per_page must be between 1 and 100 inclusive.
+- code: rest_forbidden
+  status: 401
+  title: Not permitted
+  message: Sorry, you are not allowed to do that.
+  observed_at: GET /wp-json/wp/v2/settings, GET /wp-json/wp-abilities/v1/abilities, context=edit on any collection
+  remediation: >-
+    The operation requires an authenticated WordPress user. There is no self-service credential for
+    this deployment — do not retry. Note the status is 401 while the code reads "forbidden".
+- code: rest_cannot_view
+  status: 401
+  title: Not permitted to view collection
+  message: Sorry, you are not allowed to view menus.
+  observed_at: GET /wp-json/wp/v2/menus
+  remediation: Authenticated-only collection. Not part of the catalogued surface.
+- code: rest_cannot_view_plugins
+  status: 401
+  title: Not permitted to manage plugins
+  message: Sorry, you are not allowed to manage plugins for this site.
+  observed_at: GET /wp-json/wp/v2/plugins
+  remediation: Administrative collection. Not part of the catalogued surface.
+- code: rest_cannot_view_themes
+  status: 401
+  title: Not permitted to view themes
+  message: Sorry, you are not allowed to view themes.
+  observed_at: GET /wp-json/wp/v2/themes
+  remediation: Administrative collection. Not part of the catalogued surface.
+- code: rest_comment_disabled
+  status: 403
+  title: Comments disabled
+  message: Comments are disabled.
+  observed_at: GET /wp-json/wp/v2/comments
+  remediation: >-
+    Site-wide setting, not a permission problem — no credential will make this collection readable.
+    The route is registered but the feature is off. Do not catalogue or retry.
+edge_errors:
+- source: cloudflare
+  status: 403
+  title: Bot challenge
+  detail: >-
+    Not a WordPress error and not JSON — an HTML interstitial titled "Attention Required! |
+    Cloudflare" served by the edge. Observed once during this pass after a burst of requests from a
+    bare curl user agent, and resolved by sending full browser headers. An agent that receives an
+    HTML body where JSON was expected should treat it as an edge challenge, back off, and not
+    interpret it as an application error.
+retry_guidance:
+  retryable: [503, 429, 500]
+  not_retryable: [400, 401, 403, 404]
+  detail: >-
+    No Retry-After header and no rate-limit headers are returned on this surface, so an agent has no
+    server-supplied backoff signal. robots.txt advertises Crawl-delay: 10; use it.
+cross_links:
+  conventions: conventions/mbrace-therapeutics-conventions.yml
+  authentication: authentication/mbrace-therapeutics-authentication.yml
