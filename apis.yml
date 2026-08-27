@@ -49,70 +49,16 @@ tags_raw:
 - precision-medicine
 - content-api
 apis:
-- aid: mbrace-therapeutics:mbrace-therapeutics-news-api
-  name: MBrace Therapeutics News API
-  description: >-
-    Company news archive — press releases, scientific presentations and publications (8 published at
-    harvest time, spanning the November 2023 Series B announcement through the July 2025 EphA5 ADC
-    publication).
+- aid: mbrace-therapeutics:mbrace-therapeutics-discovery-api
+  name: MBrace Therapeutics Discovery API
+  description: Route, type, taxonomy and status discovery documents.
   humanURL: https://developer.wordpress.org/rest-api/reference/posts/
   baseURL: https://mbracetrx.com/wp-json
   tags:
-  - News
-  tags_raw:
-  - news
+  - discovery
   properties:
   - type: OpenAPI
-    url: openapi/mbrace-therapeutics-news-openapi.yml
-  - type: Authentication
-    url: authentication/mbrace-therapeutics-authentication.yml
-  - type: ErrorCatalog
-    url: errors/mbrace-therapeutics-problem-types.yml
-  - type: Conventions
-    url: conventions/mbrace-therapeutics-conventions.yml
-  - type: DataModel
-    url: data-model/mbrace-therapeutics-data-model.yml
-  - type: Overlay
-    url: overlays/mbrace-therapeutics-news-overlay.yaml
-- aid: mbrace-therapeutics:mbrace-therapeutics-people-api
-  name: MBrace Therapeutics People API
-  description: >-
-    The five company-specific custom post types MBrace Therapeutics registered for its own governance
-    and backer disclosures — board members (8), executive committee (8), founders (2), investors (5)
-    and the scientific advisory board (5), each published as structured JSON.
-  humanURL: https://developer.wordpress.org/rest-api/
-  baseURL: https://mbracetrx.com/wp-json
-  tags:
-  - People
-  tags_raw:
-  - people
-  properties:
-  - type: OpenAPI
-    url: openapi/mbrace-therapeutics-people-openapi.yml
-  - type: Authentication
-    url: authentication/mbrace-therapeutics-authentication.yml
-  - type: ErrorCatalog
-    url: errors/mbrace-therapeutics-problem-types.yml
-  - type: Conventions
-    url: conventions/mbrace-therapeutics-conventions.yml
-  - type: DataModel
-    url: data-model/mbrace-therapeutics-data-model.yml
-  - type: Overlay
-    url: overlays/mbrace-therapeutics-people-overlay.yaml
-- aid: mbrace-therapeutics:mbrace-therapeutics-pages-api
-  name: MBrace Therapeutics Pages API
-  description: >-
-    Corporate site pages (12 published at harvest time), including About Us, Pipeline, Discovery
-    Platform, the MBRC-101 and MBRC-201 clinical programme pages and the Expanded Access Statement.
-  humanURL: https://developer.wordpress.org/rest-api/reference/pages/
-  baseURL: https://mbracetrx.com/wp-json
-  tags:
-  - Pages
-  tags_raw:
-  - pages
-  properties:
-  - type: OpenAPI
-    url: openapi/mbrace-therapeutics-pages-openapi.yml
+    url: openapi/mbrace-therapeutics-discovery-api-openapi.yml
   - type: Authentication
     url: authentication/mbrace-therapeutics-authentication.yml
   - type: ErrorCatalog
@@ -123,16 +69,14 @@ apis:
     url: data-model/mbrace-therapeutics-data-model.yml
 - aid: mbrace-therapeutics:mbrace-therapeutics-media-api
   name: MBrace Therapeutics Media API
-  description: Media library — 224 attachments at harvest time, including the corporate logo and leadership headshots.
-  humanURL: https://developer.wordpress.org/rest-api/reference/media/
+  description: Media library (224 attachments at harvest time).
+  humanURL: https://developer.wordpress.org/rest-api/reference/posts/
   baseURL: https://mbracetrx.com/wp-json
   tags:
-  - Media
-  tags_raw:
   - media
   properties:
   - type: OpenAPI
-    url: openapi/mbrace-therapeutics-media-openapi.yml
+    url: openapi/mbrace-therapeutics-media-api-openapi.yml
   - type: Authentication
     url: authentication/mbrace-therapeutics-authentication.yml
   - type: ErrorCatalog
@@ -141,21 +85,75 @@ apis:
     url: conventions/mbrace-therapeutics-conventions.yml
   - type: DataModel
     url: data-model/mbrace-therapeutics-data-model.yml
-- aid: mbrace-therapeutics:mbrace-therapeutics-taxonomy-api
-  name: MBrace Therapeutics Taxonomy API
+- aid: mbrace-therapeutics:mbrace-therapeutics-news-api
+  name: MBrace Therapeutics News API
   description: >-
-    Category and tag terms. Four categories are registered and are shared across the post,
-    board-member, executive-committee and founders types; the post_tag taxonomy is registered but
-    returned zero terms.
-  humanURL: https://developer.wordpress.org/rest-api/reference/categories/
+    Company news archive — press releases, scientific presentations and publications (8 published at harvest
+    time, spanning November 2023 through July 2025).
+  humanURL: https://developer.wordpress.org/rest-api/reference/posts/
   baseURL: https://mbracetrx.com/wp-json
   tags:
-  - Taxonomy
-  tags_raw:
-  - taxonomy
+  - news
   properties:
   - type: OpenAPI
-    url: openapi/mbrace-therapeutics-taxonomy-openapi.yml
+    url: openapi/mbrace-therapeutics-news-api-openapi.yml
+  - type: Authentication
+    url: authentication/mbrace-therapeutics-authentication.yml
+  - type: ErrorCatalog
+    url: errors/mbrace-therapeutics-problem-types.yml
+  - type: Conventions
+    url: conventions/mbrace-therapeutics-conventions.yml
+  - type: DataModel
+    url: data-model/mbrace-therapeutics-data-model.yml
+- aid: mbrace-therapeutics:mbrace-therapeutics-oembed-api
+  name: MBrace Therapeutics Oembed API
+  description: oEmbed 1.0 provider endpoint for mbracetrx.com URLs.
+  humanURL: https://developer.wordpress.org/rest-api/reference/posts/
+  baseURL: https://mbracetrx.com/wp-json
+  tags:
+  - oembed
+  properties:
+  - type: OpenAPI
+    url: openapi/mbrace-therapeutics-oembed-api-openapi.yml
+  - type: Authentication
+    url: authentication/mbrace-therapeutics-authentication.yml
+  - type: ErrorCatalog
+    url: errors/mbrace-therapeutics-problem-types.yml
+  - type: Conventions
+    url: conventions/mbrace-therapeutics-conventions.yml
+  - type: DataModel
+    url: data-model/mbrace-therapeutics-data-model.yml
+- aid: mbrace-therapeutics:mbrace-therapeutics-pages-api
+  name: MBrace Therapeutics Pages API
+  description: Corporate site pages (12 published at harvest time).
+  humanURL: https://developer.wordpress.org/rest-api/reference/posts/
+  baseURL: https://mbracetrx.com/wp-json
+  tags:
+  - pages
+  properties:
+  - type: OpenAPI
+    url: openapi/mbrace-therapeutics-pages-api-openapi.yml
+  - type: Authentication
+    url: authentication/mbrace-therapeutics-authentication.yml
+  - type: ErrorCatalog
+    url: errors/mbrace-therapeutics-problem-types.yml
+  - type: Conventions
+    url: conventions/mbrace-therapeutics-conventions.yml
+  - type: DataModel
+    url: data-model/mbrace-therapeutics-data-model.yml
+- aid: mbrace-therapeutics:mbrace-therapeutics-people-api
+  name: MBrace Therapeutics People API
+  description: >-
+    The five company-specific custom post types MBrace Therapeutics registered for its own governance
+    and backer disclosures: board members, executive committee, founders, investors and the scientific
+    advisory board.
+  humanURL: https://developer.wordpress.org/rest-api/reference/posts/
+  baseURL: https://mbracetrx.com/wp-json
+  tags:
+  - people
+  properties:
+  - type: OpenAPI
+    url: openapi/mbrace-therapeutics-people-api-openapi.yml
   - type: Authentication
     url: authentication/mbrace-therapeutics-authentication.yml
   - type: ErrorCatalog
@@ -167,17 +165,15 @@ apis:
 - aid: mbrace-therapeutics:mbrace-therapeutics-search-api
   name: MBrace Therapeutics Search API
   description: >-
-    Cross-content search across every published object (76 searchable objects at harvest time),
-    returning lightweight {id, title, url, type, subtype} references.
-  humanURL: https://developer.wordpress.org/rest-api/reference/search-results/
+    Cross-content search across every published object on the deployment (76 searchable objects at harvest
+    time).
+  humanURL: https://developer.wordpress.org/rest-api/reference/posts/
   baseURL: https://mbracetrx.com/wp-json
   tags:
-  - Search
-  tags_raw:
   - search
   properties:
   - type: OpenAPI
-    url: openapi/mbrace-therapeutics-search-openapi.yml
+    url: openapi/mbrace-therapeutics-search-api-openapi.yml
   - type: Authentication
     url: authentication/mbrace-therapeutics-authentication.yml
   - type: ErrorCatalog
@@ -186,21 +182,17 @@ apis:
     url: conventions/mbrace-therapeutics-conventions.yml
   - type: DataModel
     url: data-model/mbrace-therapeutics-data-model.yml
-- aid: mbrace-therapeutics:mbrace-therapeutics-discovery-api
-  name: MBrace Therapeutics Discovery API
+- aid: mbrace-therapeutics:mbrace-therapeutics-taxonomy-api
+  name: MBrace Therapeutics Taxonomy API
   description: >-
-    Route, post type, taxonomy and status discovery documents. The API root index at /wp-json/ is the
-    only machine-readable API description MBrace Therapeutics serves — 346 routes across 17
-    namespaces at harvest time.
-  humanURL: https://developer.wordpress.org/rest-api/
+    Category and tag terms. Four categories are registered; the post_tag taxonomy is registered but empty.
+  humanURL: https://developer.wordpress.org/rest-api/reference/posts/
   baseURL: https://mbracetrx.com/wp-json
   tags:
-  - Discovery
-  tags_raw:
-  - discovery
+  - taxonomy
   properties:
   - type: OpenAPI
-    url: openapi/mbrace-therapeutics-discovery-openapi.yml
+    url: openapi/mbrace-therapeutics-taxonomy-api-openapi.yml
   - type: Authentication
     url: authentication/mbrace-therapeutics-authentication.yml
   - type: ErrorCatalog
@@ -211,18 +203,14 @@ apis:
     url: data-model/mbrace-therapeutics-data-model.yml
 - aid: mbrace-therapeutics:mbrace-therapeutics-users-api
   name: MBrace Therapeutics Users API
-  description: >-
-    Post authors (3 at harvest time). Anonymously readable on this deployment — display fields only,
-    no email addresses or capabilities.
-  humanURL: https://developer.wordpress.org/rest-api/reference/users/
+  description: Post authors exposed by the users collection (3 at harvest time).
+  humanURL: https://developer.wordpress.org/rest-api/reference/posts/
   baseURL: https://mbracetrx.com/wp-json
   tags:
-  - Users
-  tags_raw:
   - users
   properties:
   - type: OpenAPI
-    url: openapi/mbrace-therapeutics-users-openapi.yml
+    url: openapi/mbrace-therapeutics-users-api-openapi.yml
   - type: Authentication
     url: authentication/mbrace-therapeutics-authentication.yml
   - type: ErrorCatalog
@@ -231,30 +219,16 @@ apis:
     url: conventions/mbrace-therapeutics-conventions.yml
   - type: DataModel
     url: data-model/mbrace-therapeutics-data-model.yml
-- aid: mbrace-therapeutics:mbrace-therapeutics-oembed-api
-  name: MBrace Therapeutics oEmbed API
-  description: oEmbed 1.0 provider endpoint resolving any mbracetrx.com URL to a titled, authored embed record.
-  humanURL: https://oembed.com/
-  baseURL: https://mbracetrx.com/wp-json
-  tags:
-  - oEmbed
-  tags_raw:
-  - oembed
-  properties:
-  - type: OpenAPI
-    url: openapi/mbrace-therapeutics-oembed-openapi.yml
-  - type: Authentication
-    url: authentication/mbrace-therapeutics-authentication.yml
-  - type: ErrorCatalog
-    url: errors/mbrace-therapeutics-problem-types.yml
-  - type: Conventions
-    url: conventions/mbrace-therapeutics-conventions.yml
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
 common:
+- type: Overlay
+  url: overlays/mbrace-therapeutics-news-overlay.yaml
+- type: Overlay
+  url: overlays/mbrace-therapeutics-people-overlay.yaml
 - type: Website
   url: https://mbracetrx.com/
 - type: About
