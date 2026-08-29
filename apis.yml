@@ -17,6 +17,18 @@ description: >-
   REST content API behind mbracetrx.com, catalogued here — notable because the company registered
   five of its own custom post types, so its board, executive committee, founders, named investors and
   scientific advisory board are all published as structured JSON rather than only as rendered HTML.
+deliveryModel:
+  model: saas
+  open_source: false
+  commercial: true
+  callable_host: true
+  label: Hosted service · you call their endpoint
+  confidence: high
+  source:
+  - openapi
+  - pricing
+  generated: '2026-08-28'
+  method: derived
 image: https://mbracetrx.com/wp-content/uploads/2021/12/logo-mbrace.svg
 url: https://raw.githubusercontent.com/api-evangelist/mbrace-therapeutics/refs/heads/main/apis.yml
 x-type: company
