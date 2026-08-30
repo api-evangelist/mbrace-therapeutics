@@ -2,15 +2,15 @@
 kin_checks:
   slug: mbrace-therapeutics
   schema_version: 0.15.1
-  scored_at: '2026-08-27'
-  run_ts: 2026-08-27T140727
+  scored_at: '2026-08-28'
+  run_ts: 2026-08-28T221322
   note: Actionable checks only (missed + partial). earned/na are every other check
     in rubric/scoring-0.15.1.yml; counts below let you verify that.
   counts:
     total: 130
-    earned: 32
+    earned: 33
     partial: 7
-    missed: 72
+    missed: 71
     na: 19
   checks:
   - id: well_known_published
@@ -27,9 +27,6 @@ kin_checks:
     detail: 0 of 9 openapi documents pass
   - id: examples_present
     status: missed
-  - id: components_reuse
-    status: missed
-    detail: 0 of 9 openapi documents pass
   - id: security_schemes_defined
     status: missed
     detail: 0 of 9 openapi documents pass
@@ -163,10 +160,10 @@ kin_checks:
     status: missed
   - id: agentic_commerce
     status: missed
-  - id: response_coverage
+  - id: components_reuse
     status: partial
-    earned: 4.44
-    detail: 8 of 9 openapi documents pass
+    earned: 0.33
+    detail: 1 of 9 openapi documents pass
   - id: conformance_declared
     status: partial
     earned: 1.5
