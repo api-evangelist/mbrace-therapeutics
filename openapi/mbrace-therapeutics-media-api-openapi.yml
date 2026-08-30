@@ -1,0 +1,440 @@
+openapi: 3.2.0
+info:
+  title: MBrace Therapeutics Content Media API
+  version: wp/v2
+  summary: Anonymously readable WordPress REST content API behind mbracetrx.com.
+  description: The read-only content surface MBrace Therapeutics exposes at https://mbracetrx.com/wp-json. MBrace Therapeutics is a privately held, clinical-stage biopharmaceutical company developing antibody-drug conjugates (ADCs) against novel oncology targets, discovered with its SPARTA in vivo antibody selection and target discovery platform. It runs no developer program and markets no product API. This document covers the media library — every attachment uploaded to the site, including the corporate logo and leadership headshots.
+  contact:
+    name: MBrace Therapeutics
+    url: https://mbracetrx.com/
+  license:
+    name: Proprietary — no published API terms
+    url: https://mbracetrx.com/terms-of-use/
+  x-api-evangelist-provenance: 'Derived by the API Evangelist enrichment pipeline from the live WordPress REST route index at https://mbracetrx.com/wp-json/ (346 routes across 17 namespaces) and verified against live anonymous responses on 2026-08-25. Every query parameter below appears verbatim in that route index''s `args` block for the endpoint it is attached to, every response field was read from a real anonymous response body, and every collection count quoted in a description was read from the `X-WP-Total` response header on that date. MBrace Therapeutics publishes no OpenAPI, no developer portal, no API reference and no developer program for this surface; the humanURL in apis.yml points at the upstream WordPress REST handbook that defines the wp/v2 contract. Write operations and the authenticated administration surface (/wp/v2/settings, /wp/v2/menus, /wp/v2/themes, /wp/v2/plugins, the elementor/*, yoast/v1, redirection/v1, string-locator/v1, wpe/* and wp-abilities/v1 namespaces) are deliberately excluded — they returned 401 anonymously and were not exercised. The deployment is served by WP Engine behind Cloudflare, page HTML is Elementor-rendered, and API responses carry `x-robots-tag: noindex`. Nothing here was obtained with credentials.'
+servers:
+- url: https://mbracetrx.com/wp-json
+  description: Production content API
+tags:
+- name: media
+  description: Media library (224 attachments at harvest time).
+paths:
+  /wp/v2/media:
+    get:
+      tags:
+      - media
+      operationId: listMedia
+      summary: List media attachments
+      description: Lists media attachments. 224 items at harvest time. `media_details` carries the generated image sizes and `source_url` the direct file URL, so an agent can resolve an asset without a second request. The corporate logo is attachment 104 (logo-mbrace.svg).
+      parameters:
+      - name: after
+        in: query
+        description: Limit response to posts published after a given ISO8601 compliant date.
+        schema:
+          type: string
+          format: date-time
+      - name: author
+        in: query
+        description: Limit result set to posts assigned to specific authors.
+        schema:
+          type: array
+          items:
+            type: integer
+      - name: author_exclude
+        in: query
+        description: Ensure result set excludes posts assigned to specific authors.
+        schema:
+          type: array
+          items:
+            type: integer
+      - name: before
+        in: query
+        description: Limit response to posts published before a given ISO8601 compliant date.
+        schema:
+          type: string
+          format: date-time
+      - name: context
+        in: query
+        description: Scope under which the request is made; determines fields present in response.
+        schema:
+          type: string
+          enum:
+          - view
+          - embed
+          - edit
+          default: view
+      - name: exclude
+        in: query
+        description: Ensure result set excludes specific IDs.
+        schema:
+          type: array
+          items:
+            type: integer
+      - name: include
+        in: query
+        description: Limit result set to specific IDs.
+        schema:
+          type: array
+          items:
+            type: integer
+      - name: media_type
+        in: query
+        description: Limit result set to attachments of a particular media type or media types.
+        schema:
+          type: array
+          items:
+            type: string
+            enum:
+            - image
+            - video
+            - text
+            - application
+            - audio
+      - name: mime_type
+        in: query
+        description: Limit result set to attachments of a particular MIME type or MIME types.
+        schema:
+          type: array
+          items:
+            type: string
+      - name: modified_after
+        in: query
+        description: Limit response to posts modified after a given ISO8601 compliant date.
+        schema:
+          type: string
+          format: date-time
+      - name: modified_before
+        in: query
+        description: Limit response to posts modified before a given ISO8601 compliant date.
+        schema:
+          type: string
+          format: date-time
+      - name: offset
+        in: query
+        description: Offset the result set by a specific number of items.
+        schema:
+          type: integer
+      - name: order
+        in: query
+        description: Order sort attribute ascending or descending.
+        schema:
+          type: string
+          enum:
+          - asc
+          - desc
+          default: desc
+      - name: orderby
+        in: query
+        description: Sort collection by post attribute.
+        schema:
+          type: string
+          enum:
+          - author
+          - date
+          - id
+          - include
+          - modified
+          - parent
+          - relevance
+          - slug
+          - include_slugs
+          - title
+          default: date
+      - name: page
+        in: query
+        description: Current page of the collection.
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+      - name: parent
+        in: query
+        description: Limit result set to items with particular parent IDs.
+        schema:
+          type: array
+          items:
+            type: integer
+      - name: parent_exclude
+        in: query
+        description: Limit result set to all items except those of a particular parent ID.
+        schema:
+          type: array
+          items:
+            type: integer
+      - name: per_page
+        in: query
+        description: Maximum number of items to be returned in result set.
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 10
+      - name: search
+        in: query
+        description: Limit results to those matching a string.
+        schema:
+          type: string
+      - name: search_columns
+        in: query
+        description: Array of column names to be searched.
+        schema:
+          type: array
+          items:
+            type: string
+            enum:
+            - post_title
+            - post_content
+            - post_excerpt
+      - name: search_semantics
+        in: query
+        description: How to interpret the search input.
+        schema:
+          type: string
+          enum:
+          - exact
+      - name: slug
+        in: query
+        description: Limit result set to posts with one or more specific slugs.
+        schema:
+          type: array
+          items:
+            type: string
+      - name: status
+        in: query
+        description: Limit result set to posts assigned one or more statuses.
+        schema:
+          type: array
+          items:
+            type: string
+            enum:
+            - inherit
+            - private
+            - trash
+          default: inherit
+      responses:
+        '200':
+          description: A page of media attachments.
+          headers:
+            X-WP-Total:
+              description: Total number of matching items.
+              schema:
+                type: integer
+            X-WP-TotalPages:
+              description: Total number of pages available.
+              schema:
+                type: integer
+            Link:
+              description: RFC 8288 pagination links (rel="next" / rel="prev").
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MediaItem'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+  /wp/v2/media/(?P<id>[\d]+):
+    get:
+      tags:
+      - media
+      operationId: getMediaItem
+      summary: Get a media attachment
+      description: Retrieve a single media attachment by its numeric identifier.
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: Unique identifier for the object.
+        schema:
+          type: integer
+      - name: context
+        in: query
+        description: Scope under which the request is made; determines fields present in response.
+        schema:
+          type: string
+          enum:
+          - view
+          - embed
+          - edit
+          default: view
+      responses:
+        '200':
+          description: A media attachment.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MediaItem'
+        '404':
+          $ref: '#/components/responses/NotFound'
+components:
+  responses:
+    NotFound:
+      description: Object not found. Returns the WordPress REST error envelope.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    BadRequest:
+      description: Invalid parameter. Returns the WordPress REST error envelope with code rest_invalid_param.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  schemas:
+    RenderedText:
+      type: object
+      description: WordPress rendered-text object.
+      properties:
+        rendered:
+          type: string
+          description: HTML for the object, transformed for display.
+        protected:
+          type: boolean
+          description: Whether the content is protected with a password.
+    Error:
+      type: object
+      description: The WordPress REST error envelope as returned by this deployment. Not RFC 9457 problem+json.
+      required:
+      - code
+      - message
+      - data
+      properties:
+        code:
+          type: string
+          description: Machine-readable error code.
+          examples:
+          - rest_post_invalid_id
+        message:
+          type: string
+          description: Human-readable error message.
+          examples:
+          - Invalid post ID.
+        data:
+          type: object
+          properties:
+            status:
+              type: integer
+              description: The HTTP status code.
+              examples:
+              - 404
+            params:
+              type: object
+              description: Per-parameter messages, present on rest_invalid_param.
+              additionalProperties:
+                type: string
+            details:
+              type: object
+              description: Per-parameter structured detail, present on rest_invalid_param.
+              additionalProperties:
+                type: object
+    MediaItem:
+      type: object
+      description: A media attachment. Field set observed live on this deployment on 2026-08-25.
+      properties:
+        _links:
+          type: object
+          description: HAL-style link relations to self, collection, author, and assigned terms.
+        acf:
+          description: Advanced Custom Fields payload. The ACF-to-REST bridge is active on every content type here, but it returned an EMPTY array on every collection sampled on 2026-08-25 — no custom field group is exposed anonymously.
+          anyOf:
+          - type: object
+          - type: array
+            items: {}
+        alt_text:
+          type: string
+          description: Alternative text to display when attachment is not displayed.
+        author:
+          type: integer
+          description: The ID for the author of the object.
+        caption:
+          allOf:
+          - $ref: '#/components/schemas/RenderedText'
+          description: The attachment caption.
+        class_list:
+          type: array
+          items:
+            type: string
+          description: The CSS class list WordPress would render for the object.
+        comment_status:
+          type: string
+          description: Whether or not comments are open on the object.
+        date:
+          type: string
+          format: date-time
+          description: The date the object was published, in the site's timezone.
+        date_gmt:
+          type: string
+          format: date-time
+          description: The date the object was published, as GMT.
+        description:
+          description: The description for the object.
+          anyOf:
+          - $ref: '#/components/schemas/RenderedText'
+          - type: string
+        featured_media:
+          type: integer
+          description: The ID of the featured media attachment.
+        filename:
+          type: string
+          description: The attachment file name.
+        filesize:
+          type: integer
+          description: The attachment file size in bytes.
+        guid:
+          allOf:
+          - $ref: '#/components/schemas/RenderedText'
+          description: The globally unique identifier for the object.
+        id:
+          type: integer
+          description: Unique identifier for the object.
+        link:
+          type: string
+          format: uri
+          description: URL to the object on the public site.
+        media_details:
+          type: object
+          description: Details about the media file, specific to its type — width, height, filesize and generated image sizes.
+        media_type:
+          type: string
+          description: 'Attachment type: image, file, video or audio.'
+        meta:
+          type: object
+          description: Registered meta fields. No custom keys are surfaced anonymously on this deployment.
+        mime_type:
+          type: string
+          description: The attachment MIME type.
+        modified:
+          type: string
+          format: date-time
+          description: The date the object was last modified, in the site's timezone.
+        modified_gmt:
+          type: string
+          format: date-time
+          description: The date the object was last modified, as GMT.
+        ping_status:
+          type: string
+          description: Whether or not the object can be pinged.
+        post:
+          type: integer
+          description: The ID for the associated post of the attachment.
+        slug:
+          type: string
+          description: An alphanumeric identifier for the object unique to its type.
+        source_url:
+          type: string
+          format: uri
+          description: URL to the original attachment file.
+        status:
+          type: string
+          description: A named status for the object. Anonymously only `publish` is returned.
+        template:
+          type: string
+          description: The theme file used to display the object.
+        title:
+          allOf:
+          - $ref: '#/components/schemas/RenderedText'
+          description: The title for the object.
+        type:
+          type: string
+          description: Type of post for the object.

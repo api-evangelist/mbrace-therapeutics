@@ -1,0 +1,491 @@
+openapi: 3.2.0
+info:
+  title: MBrace Therapeutics Content Taxonomy API
+  version: wp/v2
+  summary: Anonymously readable WordPress REST content API behind mbracetrx.com.
+  description: The read-only content surface MBrace Therapeutics exposes at https://mbracetrx.com/wp-json. MBrace Therapeutics is a privately held, clinical-stage biopharmaceutical company developing antibody-drug conjugates (ADCs) against novel oncology targets, discovered with its SPARTA in vivo antibody selection and target discovery platform. It runs no developer program and markets no product API. This document covers the taxonomy terms — the category vocabulary that classifies news posts, board members, executive committee members and founders.
+  contact:
+    name: MBrace Therapeutics
+    url: https://mbracetrx.com/
+  license:
+    name: Proprietary — no published API terms
+    url: https://mbracetrx.com/terms-of-use/
+  x-api-evangelist-provenance: 'Derived by the API Evangelist enrichment pipeline from the live WordPress REST route index at https://mbracetrx.com/wp-json/ (346 routes across 17 namespaces) and verified against live anonymous responses on 2026-08-25. Every query parameter below appears verbatim in that route index''s `args` block for the endpoint it is attached to, every response field was read from a real anonymous response body, and every collection count quoted in a description was read from the `X-WP-Total` response header on that date. MBrace Therapeutics publishes no OpenAPI, no developer portal, no API reference and no developer program for this surface; the humanURL in apis.yml points at the upstream WordPress REST handbook that defines the wp/v2 contract. Write operations and the authenticated administration surface (/wp/v2/settings, /wp/v2/menus, /wp/v2/themes, /wp/v2/plugins, the elementor/*, yoast/v1, redirection/v1, string-locator/v1, wpe/* and wp-abilities/v1 namespaces) are deliberately excluded — they returned 401 anonymously and were not exercised. The deployment is served by WP Engine behind Cloudflare, page HTML is Elementor-rendered, and API responses carry `x-robots-tag: noindex`. Nothing here was obtained with credentials.'
+servers:
+- url: https://mbracetrx.com/wp-json
+  description: Production content API
+tags:
+- name: taxonomy
+  description: Category and tag terms. Four categories are registered; the post_tag taxonomy is registered but empty.
+paths:
+  /wp/v2/categories:
+    get:
+      tags:
+      - taxonomy
+      operationId: listCategories
+      summary: List categories
+      description: Lists category terms. 4 registered at harvest time. Unusually for a WordPress deployment, the category taxonomy here is attached to four post types — post, board-member, executive-committee and founders — so it is the shared classifier across both the news archive and the people collections.
+      parameters:
+      - name: context
+        in: query
+        description: Scope under which the request is made; determines fields present in response.
+        schema:
+          type: string
+          enum:
+          - view
+          - embed
+          - edit
+          default: view
+      - name: exclude
+        in: query
+        description: Ensure result set excludes specific IDs.
+        schema:
+          type: array
+          items:
+            type: integer
+      - name: hide_empty
+        in: query
+        description: Whether to hide terms not assigned to any posts.
+        schema:
+          type: boolean
+          default: false
+      - name: include
+        in: query
+        description: Limit result set to specific IDs.
+        schema:
+          type: array
+          items:
+            type: integer
+      - name: order
+        in: query
+        description: Order sort attribute ascending or descending.
+        schema:
+          type: string
+          enum:
+          - asc
+          - desc
+          default: asc
+      - name: orderby
+        in: query
+        description: Sort collection by term attribute.
+        schema:
+          type: string
+          enum:
+          - id
+          - include
+          - name
+          - slug
+          - include_slugs
+          - term_group
+          - description
+          - count
+          default: name
+      - name: page
+        in: query
+        description: Current page of the collection.
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+      - name: parent
+        in: query
+        description: Limit result set to terms assigned to a specific parent.
+        schema:
+          type: integer
+      - name: per_page
+        in: query
+        description: Maximum number of items to be returned in result set.
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 10
+      - name: post
+        in: query
+        description: Limit result set to terms assigned to a specific post.
+        schema:
+          type: integer
+      - name: search
+        in: query
+        description: Limit results to those matching a string.
+        schema:
+          type: string
+      - name: slug
+        in: query
+        description: Limit result set to terms with one or more specific slugs.
+        schema:
+          type: array
+          items:
+            type: string
+      responses:
+        '200':
+          description: A page of category terms.
+          headers:
+            X-WP-Total:
+              description: Total number of matching items.
+              schema:
+                type: integer
+            X-WP-TotalPages:
+              description: Total number of pages available.
+              schema:
+                type: integer
+            Link:
+              description: RFC 8288 pagination links (rel="next" / rel="prev").
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Category'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+  /wp/v2/categories/(?P<id>[\d]+):
+    get:
+      tags:
+      - taxonomy
+      operationId: getCategory
+      summary: Get a category
+      description: Retrieve a single category term by its numeric identifier.
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: Unique identifier for the object.
+        schema:
+          type: integer
+      - name: context
+        in: query
+        description: Scope under which the request is made; determines fields present in response.
+        schema:
+          type: string
+          enum:
+          - view
+          - embed
+          - edit
+          default: view
+      responses:
+        '200':
+          description: A category term.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /wp/v2/tags:
+    get:
+      tags:
+      - taxonomy
+      operationId: listTags
+      summary: List tags
+      description: Lists post_tag terms. Registered and anonymously reachable, but EMPTY — X-WP-Total was 0 at harvest time.
+      parameters:
+      - name: context
+        in: query
+        description: Scope under which the request is made; determines fields present in response.
+        schema:
+          type: string
+          enum:
+          - view
+          - embed
+          - edit
+          default: view
+      - name: exclude
+        in: query
+        description: Ensure result set excludes specific IDs.
+        schema:
+          type: array
+          items:
+            type: integer
+      - name: hide_empty
+        in: query
+        description: Whether to hide terms not assigned to any posts.
+        schema:
+          type: boolean
+          default: false
+      - name: include
+        in: query
+        description: Limit result set to specific IDs.
+        schema:
+          type: array
+          items:
+            type: integer
+      - name: offset
+        in: query
+        description: Offset the result set by a specific number of items.
+        schema:
+          type: integer
+      - name: order
+        in: query
+        description: Order sort attribute ascending or descending.
+        schema:
+          type: string
+          enum:
+          - asc
+          - desc
+          default: asc
+      - name: orderby
+        in: query
+        description: Sort collection by term attribute.
+        schema:
+          type: string
+          enum:
+          - id
+          - include
+          - name
+          - slug
+          - include_slugs
+          - term_group
+          - description
+          - count
+          default: name
+      - name: page
+        in: query
+        description: Current page of the collection.
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+      - name: per_page
+        in: query
+        description: Maximum number of items to be returned in result set.
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 10
+      - name: post
+        in: query
+        description: Limit result set to terms assigned to a specific post.
+        schema:
+          type: integer
+      - name: search
+        in: query
+        description: Limit results to those matching a string.
+        schema:
+          type: string
+      - name: slug
+        in: query
+        description: Limit result set to terms with one or more specific slugs.
+        schema:
+          type: array
+          items:
+            type: string
+      responses:
+        '200':
+          description: A page of tag terms. Empty on this deployment.
+          headers:
+            X-WP-Total:
+              description: Total number of matching items.
+              schema:
+                type: integer
+            X-WP-TotalPages:
+              description: Total number of pages available.
+              schema:
+                type: integer
+            Link:
+              description: RFC 8288 pagination links (rel="next" / rel="prev").
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Tag'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+  /wp/v2/tags/(?P<id>[\d]+):
+    get:
+      tags:
+      - taxonomy
+      operationId: getTag
+      summary: Get a tag
+      description: Retrieve a single post_tag term by its numeric identifier.
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: Unique identifier for the object.
+        schema:
+          type: integer
+      - name: context
+        in: query
+        description: Scope under which the request is made; determines fields present in response.
+        schema:
+          type: string
+          enum:
+          - view
+          - embed
+          - edit
+          default: view
+      responses:
+        '200':
+          description: A tag term.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tag'
+        '404':
+          $ref: '#/components/responses/NotFound'
+components:
+  responses:
+    NotFound:
+      description: Object not found. Returns the WordPress REST error envelope.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    BadRequest:
+      description: Invalid parameter. Returns the WordPress REST error envelope with code rest_invalid_param.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  schemas:
+    RenderedText:
+      type: object
+      description: WordPress rendered-text object.
+      properties:
+        rendered:
+          type: string
+          description: HTML for the object, transformed for display.
+        protected:
+          type: boolean
+          description: Whether the content is protected with a password.
+    Tag:
+      type: object
+      description: 'A post_tag term. The taxonomy is registered and the route is reachable, but the collection returned X-WP-Total: 0 on 2026-08-25 — no tag term has been created on this deployment. The field set shown is the WordPress term shape the route would return.'
+      properties:
+        _links:
+          type: object
+          description: HAL-style link relations to self, collection, author, and assigned terms.
+        acf:
+          description: Advanced Custom Fields payload. The ACF-to-REST bridge is active on every content type here, but it returned an EMPTY array on every collection sampled on 2026-08-25 — no custom field group is exposed anonymously.
+          anyOf:
+          - type: object
+          - type: array
+            items: {}
+        count:
+          type: integer
+          description: Number of published objects assigned to the term.
+        description:
+          description: The description for the object.
+          anyOf:
+          - $ref: '#/components/schemas/RenderedText'
+          - type: string
+        id:
+          type: integer
+          description: Unique identifier for the object.
+        link:
+          type: string
+          format: uri
+          description: URL to the object on the public site.
+        meta:
+          type: object
+          description: Registered meta fields. No custom keys are surfaced anonymously on this deployment.
+        name:
+          type: string
+          description: HTML title / display name for the object.
+        parent:
+          type: integer
+          description: The ID for the parent of the object.
+        slug:
+          type: string
+          description: An alphanumeric identifier for the object unique to its type.
+        taxonomy:
+          type: string
+          description: Type attribution for the term.
+        yoast_head:
+          type: string
+          description: Rendered Yoast SEO head markup for the object.
+        yoast_head_json:
+          type: object
+          description: Structured Yoast SEO metadata including a schema.org graph.
+    Category:
+      type: object
+      description: A category term. Field set observed live on this deployment on 2026-08-25.
+      properties:
+        _links:
+          type: object
+          description: HAL-style link relations to self, collection, author, and assigned terms.
+        acf:
+          description: Advanced Custom Fields payload. The ACF-to-REST bridge is active on every content type here, but it returned an EMPTY array on every collection sampled on 2026-08-25 — no custom field group is exposed anonymously.
+          anyOf:
+          - type: object
+          - type: array
+            items: {}
+        count:
+          type: integer
+          description: Number of published objects assigned to the term.
+        description:
+          description: The description for the object.
+          anyOf:
+          - $ref: '#/components/schemas/RenderedText'
+          - type: string
+        id:
+          type: integer
+          description: Unique identifier for the object.
+        link:
+          type: string
+          format: uri
+          description: URL to the object on the public site.
+        meta:
+          type: object
+          description: Registered meta fields. No custom keys are surfaced anonymously on this deployment.
+        name:
+          type: string
+          description: HTML title / display name for the object.
+        parent:
+          type: integer
+          description: The ID for the parent of the object.
+        slug:
+          type: string
+          description: An alphanumeric identifier for the object unique to its type.
+        taxonomy:
+          type: string
+          description: Type attribution for the term.
+        yoast_head:
+          type: string
+          description: Rendered Yoast SEO head markup for the object.
+        yoast_head_json:
+          type: object
+          description: Structured Yoast SEO metadata including a schema.org graph.
+    Error:
+      type: object
+      description: The WordPress REST error envelope as returned by this deployment. Not RFC 9457 problem+json.
+      required:
+      - code
+      - message
+      - data
+      properties:
+        code:
+          type: string
+          description: Machine-readable error code.
+          examples:
+          - rest_post_invalid_id
+        message:
+          type: string
+          description: Human-readable error message.
+          examples:
+          - Invalid post ID.
+        data:
+          type: object
+          properties:
+            status:
+              type: integer
+              description: The HTTP status code.
+              examples:
+              - 404
+            params:
+              type: object
+              description: Per-parameter messages, present on rest_invalid_param.
+              additionalProperties:
+                type: string
+            details:
+              type: object
+              description: Per-parameter structured detail, present on rest_invalid_param.
+              additionalProperties:
+                type: object
