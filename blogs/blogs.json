@@ -3,12 +3,19 @@
   "feeds": [
     {
       "source": "https://mbracetrx.com/news/",
-      "feed_url": "https://mbracetrx.com/feed/",
+      "feed_url": "https://mbracetrx.com/news/feed/",
       "title": "",
       "saved": 0,
       "method": "discovered"
+    },
+    {
+      "source": "https://mbracetrx.com/feed/",
+      "feed_url": "https://mbracetrx.com/feed/",
+      "title": "",
+      "saved": 0,
+      "method": "feed"
     }
   ],
-  "post_count": 0,
-  "fetched": "2026-08-30T22:33:40Z"
+  "post_count": 7,
+  "fetched": "2026-09-06T19:17:18Z"
 }
