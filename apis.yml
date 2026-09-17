@@ -137,26 +137,6 @@ apis:
     url: conventions/mbrace-therapeutics-conventions.yml
   - type: DataModel
     url: data-model/mbrace-therapeutics-data-model.yml
-- aid: mbrace-therapeutics:mbrace-therapeutics-oembed-api
-  name: MBrace Therapeutics Oembed API
-  description: oEmbed 1.0 provider endpoint for mbracetrx.com URLs.
-  humanURL: https://developer.wordpress.org/rest-api/reference/posts/
-  baseURL: https://mbracetrx.com/wp-json
-  tags:
-  - oEmbed
-  tags_raw:
-  - oembed
-  properties:
-  - type: OpenAPI
-    url: openapi/mbrace-therapeutics-oembed-api-openapi.yml
-  - type: Authentication
-    url: authentication/mbrace-therapeutics-authentication.yml
-  - type: ErrorCatalog
-    url: errors/mbrace-therapeutics-problem-types.yml
-  - type: Conventions
-    url: conventions/mbrace-therapeutics-conventions.yml
-  - type: DataModel
-    url: data-model/mbrace-therapeutics-data-model.yml
 - aid: mbrace-therapeutics:mbrace-therapeutics-pages-api
   name: MBrace Therapeutics Pages API
   description: Corporate site pages (12 published at harvest time).
@@ -255,6 +235,24 @@ apis:
   properties:
   - type: OpenAPI
     url: openapi/mbrace-therapeutics-users-api-openapi.yml
+  - type: Authentication
+    url: authentication/mbrace-therapeutics-authentication.yml
+  - type: ErrorCatalog
+    url: errors/mbrace-therapeutics-problem-types.yml
+  - type: Conventions
+    url: conventions/mbrace-therapeutics-conventions.yml
+  - type: DataModel
+    url: data-model/mbrace-therapeutics-data-model.yml
+- aid: mbrace-therapeutics:mbrace-therapeutics-o-embed-api
+  name: MBrace Therapeutics o Embed API
+  description: oEmbed 1.0 provider endpoint for mbracetrx.com URLs.
+  humanURL: https://developer.wordpress.org/rest-api/reference/posts/
+  baseURL: https://mbracetrx.com/wp-json
+  tags:
+  - o Embed
+  properties:
+  - type: OpenAPI
+    url: openapi/mbrace-therapeutics-o-embed-api-openapi.yml
   - type: Authentication
     url: authentication/mbrace-therapeutics-authentication.yml
   - type: ErrorCatalog
