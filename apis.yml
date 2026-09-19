@@ -249,6 +249,8 @@ apis:
   humanURL: https://developer.wordpress.org/rest-api/reference/posts/
   baseURL: https://mbracetrx.com/wp-json
   tags:
+  - oEmbed
+  tags_raw:
   - o Embed
   properties:
   - type: OpenAPI
