@@ -3,7 +3,7 @@ info:
   title: MBrace Therapeutics Content Discovery API
   version: wp/v2
   summary: Anonymously readable WordPress REST content API behind mbracetrx.com.
-  description: The read-only content surface MBrace Therapeutics exposes at https://mbracetrx.com/wp-json. MBrace Therapeutics is a privately held, clinical-stage biopharmaceutical company developing antibody-drug conjugates (ADCs) against novel oncology targets, discovered with its SPARTA in vivo antibody selection and target discovery platform. It runs no developer program and markets no product API. This document covers the discovery documents — the API root index plus the registered post type, taxonomy and status vocabularies. These are the routes an agent reads first to learn what the deployment actually holds.
+  description: The read-only content surface MBrace Therapeutics exposes at https://mbracetrx.com/wp-json.
   contact:
     name: MBrace Therapeutics
     url: https://mbracetrx.com/
@@ -15,13 +15,13 @@ servers:
 - url: https://mbracetrx.com/wp-json
   description: Production content API
 tags:
-- name: discovery
+- name: Discovery
   description: Route, type, taxonomy and status discovery documents.
 paths:
   /wp/v2/types:
     get:
       tags:
-      - discovery
+      - Discovery
       operationId: listTypes
       summary: List registered post types
       description: 'Returns every registered post type keyed by name, with its rest_base, attached taxonomies and capability flags. 19 types were registered at harvest time, five of them MBrace-specific: board-member, executive-committee, founders, investor and scientific-board.'
@@ -50,7 +50,7 @@ paths:
   /wp/v2/taxonomies:
     get:
       tags:
-      - discovery
+      - Discovery
       operationId: listTaxonomies
       summary: List registered taxonomies
       description: 'Returns every registered taxonomy keyed by name. Four at harvest time: category (attached to post, board-member, executive-committee and founders), post_tag, nav_menu and wp_pattern_category.'
@@ -84,7 +84,7 @@ paths:
   /wp/v2/statuses:
     get:
       tags:
-      - discovery
+      - Discovery
       operationId: listStatuses
       summary: List registered post statuses
       description: Returns every registered post status keyed by slug. Anonymously only `publish` is queryable.
@@ -113,7 +113,7 @@ paths:
   /:
     get:
       tags:
-      - discovery
+      - Discovery
       operationId: getApiIndex
       summary: Get the API root index
       description: The WordPress REST discovery document. Returns site identity (name, url, home, timezone, site_icon_url), the registered namespaces, the authentication schemes on offer, and the full route index with per-endpoint `args`. This is the only machine-readable API description MBrace Therapeutics serves, and every operation in this repo's openapi/ directory was derived from it. 346 routes across 17 namespaces at harvest time.
@@ -141,7 +141,50 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApiIndex'
 components:
+  responses:
+    BadRequest:
+      description: Invalid parameter.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   schemas:
+    Error:
+      type: object
+      description: The WordPress REST error envelope as returned by this deployment. Not RFC 9457 problem+json.
+      required:
+      - code
+      - message
+      - data
+      properties:
+        code:
+          type: string
+          description: Machine-readable error code.
+          examples:
+          - rest_post_invalid_id
+        message:
+          type: string
+          description: Human-readable error message.
+          examples:
+          - Invalid post ID.
+        data:
+          type: object
+          properties:
+            status:
+              type: integer
+              description: The HTTP status code.
+              examples:
+              - 404
+            params:
+              type: object
+              description: Per-parameter messages, present on rest_invalid_param.
+              additionalProperties:
+                type: string
+            details:
+              type: object
+              description: Per-parameter structured detail, present on rest_invalid_param.
+              additionalProperties:
+                type: object
     ApiIndex:
       type: object
       description: The WordPress REST discovery document served at /wp-json/.
@@ -197,46 +240,3 @@ components:
         _links:
           type: object
           description: Link relations to help and self.
-    Error:
-      type: object
-      description: The WordPress REST error envelope as returned by this deployment. Not RFC 9457 problem+json.
-      required:
-      - code
-      - message
-      - data
-      properties:
-        code:
-          type: string
-          description: Machine-readable error code.
-          examples:
-          - rest_post_invalid_id
-        message:
-          type: string
-          description: Human-readable error message.
-          examples:
-          - Invalid post ID.
-        data:
-          type: object
-          properties:
-            status:
-              type: integer
-              description: The HTTP status code.
-              examples:
-              - 404
-            params:
-              type: object
-              description: Per-parameter messages, present on rest_invalid_param.
-              additionalProperties:
-                type: string
-            details:
-              type: object
-              description: Per-parameter structured detail, present on rest_invalid_param.
-              additionalProperties:
-                type: object
-  responses:
-    BadRequest:
-      description: Invalid parameter.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'

@@ -3,7 +3,7 @@ info:
   title: MBrace Therapeutics Content Search API
   version: wp/v2
   summary: Anonymously readable WordPress REST content API behind mbracetrx.com.
-  description: The read-only content surface MBrace Therapeutics exposes at https://mbracetrx.com/wp-json. MBrace Therapeutics is a privately held, clinical-stage biopharmaceutical company developing antibody-drug conjugates (ADCs) against novel oncology targets, discovered with its SPARTA in vivo antibody selection and target discovery platform. It runs no developer program and markets no product API. This document covers the cross-content search endpoint, which resolves a query string to lightweight {id, title, url, type, subtype} references across every published object.
+  description: The read-only content surface MBrace Therapeutics exposes at https://mbracetrx.com/wp-json.
   contact:
     name: MBrace Therapeutics
     url: https://mbracetrx.com/
@@ -15,13 +15,13 @@ servers:
 - url: https://mbracetrx.com/wp-json
   description: Production content API
 tags:
-- name: search
+- name: Search
   description: Cross-content search across every published object on the deployment (76 searchable objects at harvest time).
 paths:
   /wp/v2/search:
     get:
       tags:
-      - search
+      - Search
       operationId: searchContent
       summary: Search all content
       description: Searches across published objects. 76 searchable objects at harvest time. Returns references rather than full objects — resolve `id` against the collection named by `subtype` for the full record. This is the cheapest entry point for an agent that does not already know an object identifier.
@@ -162,16 +162,6 @@ components:
               description: Per-parameter structured detail, present on rest_invalid_param.
               additionalProperties:
                 type: object
-    RenderedText:
-      type: object
-      description: WordPress rendered-text object.
-      properties:
-        rendered:
-          type: string
-          description: HTML for the object, transformed for display.
-        protected:
-          type: boolean
-          description: Whether the content is protected with a password.
     SearchResult:
       type: object
       description: A lightweight search result reference. Field set observed live on this deployment on 2026-08-25. Use `type`/`subtype` to pick which typed collection to dereference the `id` against.
@@ -196,6 +186,16 @@ components:
           type: string
           format: uri
           description: URL of the object.
+    RenderedText:
+      type: object
+      description: WordPress rendered-text object.
+      properties:
+        rendered:
+          type: string
+          description: HTML for the object, transformed for display.
+        protected:
+          type: boolean
+          description: Whether the content is protected with a password.
   responses:
     BadRequest:
       description: Invalid parameter. Returns the WordPress REST error envelope with code rest_invalid_param.

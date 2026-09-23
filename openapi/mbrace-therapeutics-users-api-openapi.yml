@@ -3,7 +3,7 @@ info:
   title: MBrace Therapeutics Content Users API
   version: wp/v2
   summary: Anonymously readable WordPress REST content API behind mbracetrx.com.
-  description: The read-only content surface MBrace Therapeutics exposes at https://mbracetrx.com/wp-json. MBrace Therapeutics is a privately held, clinical-stage biopharmaceutical company developing antibody-drug conjugates (ADCs) against novel oncology targets, discovered with its SPARTA in vivo antibody selection and target discovery platform. It runs no developer program and markets no product API. This document covers the users collection. Note this is anonymously readable on this deployment — WordPress exposes authors who have published content.
+  description: The read-only content surface MBrace Therapeutics exposes at https://mbracetrx.com/wp-json.
   contact:
     name: MBrace Therapeutics
     url: https://mbracetrx.com/
@@ -15,13 +15,13 @@ servers:
 - url: https://mbracetrx.com/wp-json
   description: Production content API
 tags:
-- name: users
+- name: Users
   description: Post authors exposed by the users collection (3 at harvest time).
 paths:
   /wp/v2/users:
     get:
       tags:
-      - users
+      - Users
       operationId: listUsers
       summary: List users
       description: Lists users who have published content. 3 items at harvest time. Anonymously readable on this deployment; the site does not restrict the WordPress author-enumeration surface. Only display fields are returned — name, slug, description, link and avatar URLs. No email addresses or capabilities are exposed anonymously.
@@ -172,7 +172,7 @@ paths:
   /wp/v2/users/(?P<id>[\d]+):
     get:
       tags:
-      - users
+      - Users
       operationId: getUser
       summary: Get a user
       description: Retrieve a single user by numeric identifier.
@@ -217,6 +217,52 @@ components:
           schema:
             $ref: '#/components/schemas/Error'
   schemas:
+    Error:
+      type: object
+      description: The WordPress REST error envelope as returned by this deployment. Not RFC 9457 problem+json.
+      required:
+      - code
+      - message
+      - data
+      properties:
+        code:
+          type: string
+          description: Machine-readable error code.
+          examples:
+          - rest_post_invalid_id
+        message:
+          type: string
+          description: Human-readable error message.
+          examples:
+          - Invalid post ID.
+        data:
+          type: object
+          properties:
+            status:
+              type: integer
+              description: The HTTP status code.
+              examples:
+              - 404
+            params:
+              type: object
+              description: Per-parameter messages, present on rest_invalid_param.
+              additionalProperties:
+                type: string
+            details:
+              type: object
+              description: Per-parameter structured detail, present on rest_invalid_param.
+              additionalProperties:
+                type: object
+    RenderedText:
+      type: object
+      description: WordPress rendered-text object.
+      properties:
+        rendered:
+          type: string
+          description: HTML for the object, transformed for display.
+        protected:
+          type: boolean
+          description: Whether the content is protected with a password.
     User:
       type: object
       description: A user (post author) record as returned anonymously. Field set observed live on 2026-08-25. Anonymous `context=view` returns display data only — no email address and no role/capability data.
@@ -267,49 +313,3 @@ components:
         yoast_head_json:
           type: object
           description: Structured Yoast SEO metadata including a schema.org graph.
-    RenderedText:
-      type: object
-      description: WordPress rendered-text object.
-      properties:
-        rendered:
-          type: string
-          description: HTML for the object, transformed for display.
-        protected:
-          type: boolean
-          description: Whether the content is protected with a password.
-    Error:
-      type: object
-      description: The WordPress REST error envelope as returned by this deployment. Not RFC 9457 problem+json.
-      required:
-      - code
-      - message
-      - data
-      properties:
-        code:
-          type: string
-          description: Machine-readable error code.
-          examples:
-          - rest_post_invalid_id
-        message:
-          type: string
-          description: Human-readable error message.
-          examples:
-          - Invalid post ID.
-        data:
-          type: object
-          properties:
-            status:
-              type: integer
-              description: The HTTP status code.
-              examples:
-              - 404
-            params:
-              type: object
-              description: Per-parameter messages, present on rest_invalid_param.
-              additionalProperties:
-                type: string
-            details:
-              type: object
-              description: Per-parameter structured detail, present on rest_invalid_param.
-              additionalProperties:
-                type: object

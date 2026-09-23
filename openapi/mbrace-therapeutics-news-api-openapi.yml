@@ -3,7 +3,7 @@ info:
   title: MBrace Therapeutics Content News API
   version: wp/v2
   summary: Anonymously readable WordPress REST content API behind mbracetrx.com.
-  description: The read-only content surface MBrace Therapeutics exposes at https://mbracetrx.com/wp-json. MBrace Therapeutics is a privately held, clinical-stage biopharmaceutical company developing antibody-drug conjugates (ADCs) against novel oncology targets, discovered with its SPARTA in vivo antibody selection and target discovery platform. It runs no developer program and markets no product API. This document covers the post collection, which on this deployment is the MBrace Therapeutics news and publications archive.
+  description: The read-only content surface MBrace Therapeutics exposes at https://mbracetrx.com/wp-json.
   contact:
     name: MBrace Therapeutics
     url: https://mbracetrx.com/
@@ -15,13 +15,13 @@ servers:
 - url: https://mbracetrx.com/wp-json
   description: Production content API
 tags:
-- name: news
+- name: News
   description: Company news archive — press releases, scientific presentations and publications (8 published at harvest time, spanning November 2023 through July 2025).
 paths:
   /wp/v2/posts:
     get:
       tags:
-      - news
+      - News
       operationId: listNews
       summary: List news posts
       description: Lists published posts. On this deployment the collection is the company news archive — 8 items covering the $85M Series B and emergence from stealth (Nov 2023), the SABCS 2023 and AACR 2024 preclinical presentations, the Phase 1 first-patient-dosed announcement for MBRC-101, the ASCO 2024 trial-in-progress poster, the Steve Alley CSO appointment, and the EphA5-targeted ADC publication. Paginated; X-WP-Total and X-WP-TotalPages are exposed via Access-Control-Expose-Headers.
@@ -271,7 +271,7 @@ paths:
   /wp/v2/posts/(?P<id>[\d]+):
     get:
       tags:
-      - news
+      - News
       operationId: getNewsPost
       summary: Get a news post
       description: Retrieve a single published news post by its numeric identifier.
@@ -326,6 +326,52 @@ components:
           schema:
             $ref: '#/components/schemas/Error'
   schemas:
+    Error:
+      type: object
+      description: The WordPress REST error envelope as returned by this deployment. Not RFC 9457 problem+json.
+      required:
+      - code
+      - message
+      - data
+      properties:
+        code:
+          type: string
+          description: Machine-readable error code.
+          examples:
+          - rest_post_invalid_id
+        message:
+          type: string
+          description: Human-readable error message.
+          examples:
+          - Invalid post ID.
+        data:
+          type: object
+          properties:
+            status:
+              type: integer
+              description: The HTTP status code.
+              examples:
+              - 404
+            params:
+              type: object
+              description: Per-parameter messages, present on rest_invalid_param.
+              additionalProperties:
+                type: string
+            details:
+              type: object
+              description: Per-parameter structured detail, present on rest_invalid_param.
+              additionalProperties:
+                type: object
+    RenderedText:
+      type: object
+      description: WordPress rendered-text object.
+      properties:
+        rendered:
+          type: string
+          description: HTML for the object, transformed for display.
+        protected:
+          type: boolean
+          description: Whether the content is protected with a password.
     Post:
       type: object
       description: A news post. Field set observed live on this deployment on 2026-08-25, including the Yoast SEO and ACF extensions.
@@ -432,49 +478,3 @@ components:
         yoast_head_json:
           type: object
           description: Structured Yoast SEO metadata including a schema.org graph.
-    RenderedText:
-      type: object
-      description: WordPress rendered-text object.
-      properties:
-        rendered:
-          type: string
-          description: HTML for the object, transformed for display.
-        protected:
-          type: boolean
-          description: Whether the content is protected with a password.
-    Error:
-      type: object
-      description: The WordPress REST error envelope as returned by this deployment. Not RFC 9457 problem+json.
-      required:
-      - code
-      - message
-      - data
-      properties:
-        code:
-          type: string
-          description: Machine-readable error code.
-          examples:
-          - rest_post_invalid_id
-        message:
-          type: string
-          description: Human-readable error message.
-          examples:
-          - Invalid post ID.
-        data:
-          type: object
-          properties:
-            status:
-              type: integer
-              description: The HTTP status code.
-              examples:
-              - 404
-            params:
-              type: object
-              description: Per-parameter messages, present on rest_invalid_param.
-              additionalProperties:
-                type: string
-            details:
-              type: object
-              description: Per-parameter structured detail, present on rest_invalid_param.
-              additionalProperties:
-                type: object

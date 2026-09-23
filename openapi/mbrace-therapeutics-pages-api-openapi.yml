@@ -15,13 +15,13 @@ servers:
 - url: https://mbracetrx.com/wp-json
   description: Production content API
 tags:
-- name: pages
+- name: Pages
   description: Corporate site pages (12 published at harvest time).
 paths:
   /wp/v2/pages:
     get:
       tags:
-      - pages
+      - Pages
       operationId: listPages
       summary: List pages
       description: Lists published pages. 12 items at harvest time, including About Us, Pipeline, Discovery Platform, the MBRC-101 and MBRC-201 clinical programme pages, Expanded Access Statement, Contact, Terms of Use and Privacy Policy. Page bodies are Elementor-rendered HTML and are returned in full in `content.rendered`, which is why this collection is by far the heaviest on the deployment.
@@ -234,7 +234,7 @@ paths:
   /wp/v2/pages/(?P<id>[\d]+):
     get:
       tags:
-      - pages
+      - Pages
       operationId: getPage
       summary: Get a page
       description: Retrieve a single published page by its numeric identifier.
@@ -289,6 +289,42 @@ components:
           schema:
             $ref: '#/components/schemas/Error'
   schemas:
+    Error:
+      type: object
+      description: The WordPress REST error envelope as returned by this deployment. Not RFC 9457 problem+json.
+      required:
+      - code
+      - message
+      - data
+      properties:
+        code:
+          type: string
+          description: Machine-readable error code.
+          examples:
+          - rest_post_invalid_id
+        message:
+          type: string
+          description: Human-readable error message.
+          examples:
+          - Invalid post ID.
+        data:
+          type: object
+          properties:
+            status:
+              type: integer
+              description: The HTTP status code.
+              examples:
+              - 404
+            params:
+              type: object
+              description: Per-parameter messages, present on rest_invalid_param.
+              additionalProperties:
+                type: string
+            details:
+              type: object
+              description: Per-parameter structured detail, present on rest_invalid_param.
+              additionalProperties:
+                type: object
     RenderedText:
       type: object
       description: WordPress rendered-text object.
@@ -395,39 +431,3 @@ components:
         yoast_head_json:
           type: object
           description: Structured Yoast SEO metadata including a schema.org graph.
-    Error:
-      type: object
-      description: The WordPress REST error envelope as returned by this deployment. Not RFC 9457 problem+json.
-      required:
-      - code
-      - message
-      - data
-      properties:
-        code:
-          type: string
-          description: Machine-readable error code.
-          examples:
-          - rest_post_invalid_id
-        message:
-          type: string
-          description: Human-readable error message.
-          examples:
-          - Invalid post ID.
-        data:
-          type: object
-          properties:
-            status:
-              type: integer
-              description: The HTTP status code.
-              examples:
-              - 404
-            params:
-              type: object
-              description: Per-parameter messages, present on rest_invalid_param.
-              additionalProperties:
-                type: string
-            details:
-              type: object
-              description: Per-parameter structured detail, present on rest_invalid_param.
-              additionalProperties:
-                type: object

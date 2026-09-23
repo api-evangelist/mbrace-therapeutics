@@ -3,7 +3,7 @@ info:
   title: MBrace Therapeutics Content People API
   version: wp/v2
   summary: Anonymously readable WordPress REST content API behind mbracetrx.com.
-  description: 'The read-only content surface MBrace Therapeutics exposes at https://mbracetrx.com/wp-json. MBrace Therapeutics is a privately held, clinical-stage biopharmaceutical company developing antibody-drug conjugates (ADCs) against novel oncology targets, discovered with its SPARTA in vivo antibody selection and target discovery platform. It runs no developer program and markets no product API. This document covers the five custom post types this company registered itself. Unlike the generic WordPress collections, these are MBrace-specific content models — and they are the reason this deployment is worth cataloguing: the company''s board, executive committee, founders, named investors and scientific advisory board are all published as structured JSON, not just as rendered HTML.'
+  description: The read-only content surface MBrace Therapeutics exposes at https://mbracetrx.com/wp-json.
   contact:
     name: MBrace Therapeutics
     url: https://mbracetrx.com/
@@ -15,13 +15,13 @@ servers:
 - url: https://mbracetrx.com/wp-json
   description: Production content API
 tags:
-- name: people
+- name: People
   description: 'The five company-specific custom post types MBrace Therapeutics registered for its own governance and backer disclosures: board members, executive committee, founders, investors and the scientific advisory board.'
 paths:
   /wp/v2/board-member:
     get:
       tags:
-      - people
+      - People
       operationId: listBoardMembers
       summary: List board members
       description: Lists published board-member records. 8 items at harvest time. Classified by the shared `category` taxonomy.
@@ -232,7 +232,7 @@ paths:
   /wp/v2/board-member/(?P<id>[\d]+):
     get:
       tags:
-      - people
+      - People
       operationId: getBoardMember
       summary: Get a board member
       description: Retrieve a single board-member record by its numeric identifier.
@@ -275,7 +275,7 @@ paths:
   /wp/v2/executive-committee:
     get:
       tags:
-      - people
+      - People
       operationId: listExecutiveCommittee
       summary: List executive committee members
       description: Lists published executive-committee records. 8 items at harvest time — the company officers, including the CEO, President & Head of R&D, CSO, CMO and Chief Development Officer.
@@ -472,7 +472,7 @@ paths:
   /wp/v2/executive-committee/(?P<id>[\d]+):
     get:
       tags:
-      - people
+      - People
       operationId: getExecutiveCommitteeMember
       summary: Get an executive committee member
       description: Retrieve a single executive-committee record by its numeric identifier.
@@ -515,7 +515,7 @@ paths:
   /wp/v2/founders:
     get:
       tags:
-      - people
+      - People
       operationId: listFounders
       summary: List founders
       description: Lists published founder records. 2 items at harvest time — Renata Pasqualini, Ph.D. and Isan Chen, MD, the company co-founders.
@@ -726,7 +726,7 @@ paths:
   /wp/v2/founders/(?P<id>[\d]+):
     get:
       tags:
-      - people
+      - People
       operationId: getFounder
       summary: Get a founder
       description: Retrieve a single founder record by its numeric identifier.
@@ -769,7 +769,7 @@ paths:
   /wp/v2/investor:
     get:
       tags:
-      - people
+      - People
       operationId: listInvestors
       summary: List investors
       description: Lists published investor records. 5 items at harvest time — Blue Owl Capital, Avidity Partners, TPG, Venrock and Alta Partners. This is the company's own machine-readable disclosure of its backers.
@@ -948,7 +948,7 @@ paths:
   /wp/v2/investor/(?P<id>[\d]+):
     get:
       tags:
-      - people
+      - People
       operationId: getInvestor
       summary: Get an investor
       description: Retrieve a single investor record by its numeric identifier.
@@ -986,7 +986,7 @@ paths:
   /wp/v2/scientific-board:
     get:
       tags:
-      - people
+      - People
       operationId: listScientificBoard
       summary: List scientific advisory board members
       description: Lists published scientific-board records. 5 items at harvest time — the clinical and translational oncology advisers to the ADC programmes.
@@ -1179,7 +1179,7 @@ paths:
   /wp/v2/scientific-board/(?P<id>[\d]+):
     get:
       tags:
-      - people
+      - People
       operationId: getScientificBoardMember
       summary: Get a scientific advisory board member
       description: Retrieve a single scientific-board record by its numeric identifier.
@@ -1274,174 +1274,6 @@ components:
           type: string
           format: uri
           description: URL to the object on the public site.
-        modified:
-          type: string
-          format: date-time
-          description: The date the object was last modified, in the site's timezone.
-        modified_gmt:
-          type: string
-          format: date-time
-          description: The date the object was last modified, as GMT.
-        parent:
-          type: integer
-          description: The ID for the parent of the object.
-        slug:
-          type: string
-          description: An alphanumeric identifier for the object unique to its type.
-        status:
-          type: string
-          description: A named status for the object. Anonymously only `publish` is returned.
-        template:
-          type: string
-          description: The theme file used to display the object.
-        title:
-          allOf:
-          - $ref: '#/components/schemas/RenderedText'
-          description: The title for the object.
-        type:
-          type: string
-          description: Type of post for the object.
-        yoast_head:
-          type: string
-          description: Rendered Yoast SEO head markup for the object.
-        yoast_head_json:
-          type: object
-          description: Structured Yoast SEO metadata including a schema.org graph.
-    Investor:
-      type: object
-      description: An investor record. Field set observed live on this deployment on 2026-08-25. Note this type carries no `categories` field — unlike board-member, executive-committee and founders, the investor type is not attached to the category taxonomy.
-      properties:
-        _links:
-          type: object
-          description: HAL-style link relations to self, collection, author, and assigned terms.
-        acf:
-          description: Advanced Custom Fields payload. The ACF-to-REST bridge is active on every content type here, but it returned an EMPTY array on every collection sampled on 2026-08-25 — no custom field group is exposed anonymously.
-          anyOf:
-          - type: object
-          - type: array
-            items: {}
-        class_list:
-          type: array
-          items:
-            type: string
-          description: The CSS class list WordPress would render for the object.
-        content:
-          allOf:
-          - $ref: '#/components/schemas/RenderedText'
-          description: The content for the object.
-        date:
-          type: string
-          format: date-time
-          description: The date the object was published, in the site's timezone.
-        date_gmt:
-          type: string
-          format: date-time
-          description: The date the object was published, as GMT.
-        featured_media:
-          type: integer
-          description: The ID of the featured media attachment.
-        guid:
-          allOf:
-          - $ref: '#/components/schemas/RenderedText'
-          description: The globally unique identifier for the object.
-        id:
-          type: integer
-          description: Unique identifier for the object.
-        link:
-          type: string
-          format: uri
-          description: URL to the object on the public site.
-        modified:
-          type: string
-          format: date-time
-          description: The date the object was last modified, in the site's timezone.
-        modified_gmt:
-          type: string
-          format: date-time
-          description: The date the object was last modified, as GMT.
-        slug:
-          type: string
-          description: An alphanumeric identifier for the object unique to its type.
-        status:
-          type: string
-          description: A named status for the object. Anonymously only `publish` is returned.
-        template:
-          type: string
-          description: The theme file used to display the object.
-        title:
-          allOf:
-          - $ref: '#/components/schemas/RenderedText'
-          description: The title for the object.
-        type:
-          type: string
-          description: Type of post for the object.
-        yoast_head:
-          type: string
-          description: Rendered Yoast SEO head markup for the object.
-        yoast_head_json:
-          type: object
-          description: Structured Yoast SEO metadata including a schema.org graph.
-    RenderedText:
-      type: object
-      description: WordPress rendered-text object.
-      properties:
-        rendered:
-          type: string
-          description: HTML for the object, transformed for display.
-        protected:
-          type: boolean
-          description: Whether the content is protected with a password.
-    ScientificBoardMember:
-      type: object
-      description: A scientific advisory board member record. Field set observed live on this deployment on 2026-08-25.
-      properties:
-        _links:
-          type: object
-          description: HAL-style link relations to self, collection, author, and assigned terms.
-        acf:
-          description: Advanced Custom Fields payload. The ACF-to-REST bridge is active on every content type here, but it returned an EMPTY array on every collection sampled on 2026-08-25 — no custom field group is exposed anonymously.
-          anyOf:
-          - type: object
-          - type: array
-            items: {}
-        class_list:
-          type: array
-          items:
-            type: string
-          description: The CSS class list WordPress would render for the object.
-        content:
-          allOf:
-          - $ref: '#/components/schemas/RenderedText'
-          description: The content for the object.
-        date:
-          type: string
-          format: date-time
-          description: The date the object was published, in the site's timezone.
-        date_gmt:
-          type: string
-          format: date-time
-          description: The date the object was published, as GMT.
-        excerpt:
-          allOf:
-          - $ref: '#/components/schemas/RenderedText'
-          description: The excerpt for the object.
-        featured_media:
-          type: integer
-          description: The ID of the featured media attachment.
-        guid:
-          allOf:
-          - $ref: '#/components/schemas/RenderedText'
-          description: The globally unique identifier for the object.
-        id:
-          type: integer
-          description: Unique identifier for the object.
-        link:
-          type: string
-          format: uri
-          description: URL to the object on the public site.
-        meta:
-          type: object
-          description: Registered meta fields. No custom keys are surfaced anonymously on this deployment.
         modified:
           type: string
           format: date-time
@@ -1644,6 +1476,90 @@ components:
         yoast_head_json:
           type: object
           description: Structured Yoast SEO metadata including a schema.org graph.
+    ScientificBoardMember:
+      type: object
+      description: A scientific advisory board member record. Field set observed live on this deployment on 2026-08-25.
+      properties:
+        _links:
+          type: object
+          description: HAL-style link relations to self, collection, author, and assigned terms.
+        acf:
+          description: Advanced Custom Fields payload. The ACF-to-REST bridge is active on every content type here, but it returned an EMPTY array on every collection sampled on 2026-08-25 — no custom field group is exposed anonymously.
+          anyOf:
+          - type: object
+          - type: array
+            items: {}
+        class_list:
+          type: array
+          items:
+            type: string
+          description: The CSS class list WordPress would render for the object.
+        content:
+          allOf:
+          - $ref: '#/components/schemas/RenderedText'
+          description: The content for the object.
+        date:
+          type: string
+          format: date-time
+          description: The date the object was published, in the site's timezone.
+        date_gmt:
+          type: string
+          format: date-time
+          description: The date the object was published, as GMT.
+        excerpt:
+          allOf:
+          - $ref: '#/components/schemas/RenderedText'
+          description: The excerpt for the object.
+        featured_media:
+          type: integer
+          description: The ID of the featured media attachment.
+        guid:
+          allOf:
+          - $ref: '#/components/schemas/RenderedText'
+          description: The globally unique identifier for the object.
+        id:
+          type: integer
+          description: Unique identifier for the object.
+        link:
+          type: string
+          format: uri
+          description: URL to the object on the public site.
+        meta:
+          type: object
+          description: Registered meta fields. No custom keys are surfaced anonymously on this deployment.
+        modified:
+          type: string
+          format: date-time
+          description: The date the object was last modified, in the site's timezone.
+        modified_gmt:
+          type: string
+          format: date-time
+          description: The date the object was last modified, as GMT.
+        parent:
+          type: integer
+          description: The ID for the parent of the object.
+        slug:
+          type: string
+          description: An alphanumeric identifier for the object unique to its type.
+        status:
+          type: string
+          description: A named status for the object. Anonymously only `publish` is returned.
+        template:
+          type: string
+          description: The theme file used to display the object.
+        title:
+          allOf:
+          - $ref: '#/components/schemas/RenderedText'
+          description: The title for the object.
+        type:
+          type: string
+          description: Type of post for the object.
+        yoast_head:
+          type: string
+          description: Rendered Yoast SEO head markup for the object.
+        yoast_head_json:
+          type: object
+          description: Structured Yoast SEO metadata including a schema.org graph.
     Error:
       type: object
       description: The WordPress REST error envelope as returned by this deployment. Not RFC 9457 problem+json.
@@ -1680,6 +1596,90 @@ components:
               description: Per-parameter structured detail, present on rest_invalid_param.
               additionalProperties:
                 type: object
+    RenderedText:
+      type: object
+      description: WordPress rendered-text object.
+      properties:
+        rendered:
+          type: string
+          description: HTML for the object, transformed for display.
+        protected:
+          type: boolean
+          description: Whether the content is protected with a password.
+    Investor:
+      type: object
+      description: An investor record. Field set observed live on this deployment on 2026-08-25. Note this type carries no `categories` field — unlike board-member, executive-committee and founders, the investor type is not attached to the category taxonomy.
+      properties:
+        _links:
+          type: object
+          description: HAL-style link relations to self, collection, author, and assigned terms.
+        acf:
+          description: Advanced Custom Fields payload. The ACF-to-REST bridge is active on every content type here, but it returned an EMPTY array on every collection sampled on 2026-08-25 — no custom field group is exposed anonymously.
+          anyOf:
+          - type: object
+          - type: array
+            items: {}
+        class_list:
+          type: array
+          items:
+            type: string
+          description: The CSS class list WordPress would render for the object.
+        content:
+          allOf:
+          - $ref: '#/components/schemas/RenderedText'
+          description: The content for the object.
+        date:
+          type: string
+          format: date-time
+          description: The date the object was published, in the site's timezone.
+        date_gmt:
+          type: string
+          format: date-time
+          description: The date the object was published, as GMT.
+        featured_media:
+          type: integer
+          description: The ID of the featured media attachment.
+        guid:
+          allOf:
+          - $ref: '#/components/schemas/RenderedText'
+          description: The globally unique identifier for the object.
+        id:
+          type: integer
+          description: Unique identifier for the object.
+        link:
+          type: string
+          format: uri
+          description: URL to the object on the public site.
+        modified:
+          type: string
+          format: date-time
+          description: The date the object was last modified, in the site's timezone.
+        modified_gmt:
+          type: string
+          format: date-time
+          description: The date the object was last modified, as GMT.
+        slug:
+          type: string
+          description: An alphanumeric identifier for the object unique to its type.
+        status:
+          type: string
+          description: A named status for the object. Anonymously only `publish` is returned.
+        template:
+          type: string
+          description: The theme file used to display the object.
+        title:
+          allOf:
+          - $ref: '#/components/schemas/RenderedText'
+          description: The title for the object.
+        type:
+          type: string
+          description: Type of post for the object.
+        yoast_head:
+          type: string
+          description: Rendered Yoast SEO head markup for the object.
+        yoast_head_json:
+          type: object
+          description: Structured Yoast SEO metadata including a schema.org graph.
   responses:
     NotFound:
       description: Object not found. Returns the WordPress REST error envelope.

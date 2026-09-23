@@ -3,7 +3,7 @@ info:
   title: MBrace Therapeutics Content Taxonomy API
   version: wp/v2
   summary: Anonymously readable WordPress REST content API behind mbracetrx.com.
-  description: The read-only content surface MBrace Therapeutics exposes at https://mbracetrx.com/wp-json. MBrace Therapeutics is a privately held, clinical-stage biopharmaceutical company developing antibody-drug conjugates (ADCs) against novel oncology targets, discovered with its SPARTA in vivo antibody selection and target discovery platform. It runs no developer program and markets no product API. This document covers the taxonomy terms — the category vocabulary that classifies news posts, board members, executive committee members and founders.
+  description: The read-only content surface MBrace Therapeutics exposes at https://mbracetrx.com/wp-json.
   contact:
     name: MBrace Therapeutics
     url: https://mbracetrx.com/
@@ -15,13 +15,13 @@ servers:
 - url: https://mbracetrx.com/wp-json
   description: Production content API
 tags:
-- name: taxonomy
+- name: Taxonomy
   description: Category and tag terms. Four categories are registered; the post_tag taxonomy is registered but empty.
 paths:
   /wp/v2/categories:
     get:
       tags:
-      - taxonomy
+      - Taxonomy
       operationId: listCategories
       summary: List categories
       description: Lists category terms. 4 registered at harvest time. Unusually for a WordPress deployment, the category taxonomy here is attached to four post types — post, board-member, executive-committee and founders — so it is the shared classifier across both the news archive and the people collections.
@@ -144,7 +144,7 @@ paths:
   /wp/v2/categories/(?P<id>[\d]+):
     get:
       tags:
-      - taxonomy
+      - Taxonomy
       operationId: getCategory
       summary: Get a category
       description: Retrieve a single category term by its numeric identifier.
@@ -177,7 +177,7 @@ paths:
   /wp/v2/tags:
     get:
       tags:
-      - taxonomy
+      - Taxonomy
       operationId: listTags
       summary: List tags
       description: Lists post_tag terms. Registered and anonymously reachable, but EMPTY — X-WP-Total was 0 at harvest time.
@@ -300,7 +300,7 @@ paths:
   /wp/v2/tags/(?P<id>[\d]+):
     get:
       tags:
-      - taxonomy
+      - Taxonomy
       operationId: getTag
       summary: Get a tag
       description: Retrieve a single post_tag term by its numeric identifier.
@@ -345,68 +345,9 @@ components:
           schema:
             $ref: '#/components/schemas/Error'
   schemas:
-    RenderedText:
-      type: object
-      description: WordPress rendered-text object.
-      properties:
-        rendered:
-          type: string
-          description: HTML for the object, transformed for display.
-        protected:
-          type: boolean
-          description: Whether the content is protected with a password.
     Tag:
       type: object
       description: 'A post_tag term. The taxonomy is registered and the route is reachable, but the collection returned X-WP-Total: 0 on 2026-08-25 — no tag term has been created on this deployment. The field set shown is the WordPress term shape the route would return.'
-      properties:
-        _links:
-          type: object
-          description: HAL-style link relations to self, collection, author, and assigned terms.
-        acf:
-          description: Advanced Custom Fields payload. The ACF-to-REST bridge is active on every content type here, but it returned an EMPTY array on every collection sampled on 2026-08-25 — no custom field group is exposed anonymously.
-          anyOf:
-          - type: object
-          - type: array
-            items: {}
-        count:
-          type: integer
-          description: Number of published objects assigned to the term.
-        description:
-          description: The description for the object.
-          anyOf:
-          - $ref: '#/components/schemas/RenderedText'
-          - type: string
-        id:
-          type: integer
-          description: Unique identifier for the object.
-        link:
-          type: string
-          format: uri
-          description: URL to the object on the public site.
-        meta:
-          type: object
-          description: Registered meta fields. No custom keys are surfaced anonymously on this deployment.
-        name:
-          type: string
-          description: HTML title / display name for the object.
-        parent:
-          type: integer
-          description: The ID for the parent of the object.
-        slug:
-          type: string
-          description: An alphanumeric identifier for the object unique to its type.
-        taxonomy:
-          type: string
-          description: Type attribution for the term.
-        yoast_head:
-          type: string
-          description: Rendered Yoast SEO head markup for the object.
-        yoast_head_json:
-          type: object
-          description: Structured Yoast SEO metadata including a schema.org graph.
-    Category:
-      type: object
-      description: A category term. Field set observed live on this deployment on 2026-08-25.
       properties:
         _links:
           type: object
@@ -489,3 +430,62 @@ components:
               description: Per-parameter structured detail, present on rest_invalid_param.
               additionalProperties:
                 type: object
+    RenderedText:
+      type: object
+      description: WordPress rendered-text object.
+      properties:
+        rendered:
+          type: string
+          description: HTML for the object, transformed for display.
+        protected:
+          type: boolean
+          description: Whether the content is protected with a password.
+    Category:
+      type: object
+      description: A category term. Field set observed live on this deployment on 2026-08-25.
+      properties:
+        _links:
+          type: object
+          description: HAL-style link relations to self, collection, author, and assigned terms.
+        acf:
+          description: Advanced Custom Fields payload. The ACF-to-REST bridge is active on every content type here, but it returned an EMPTY array on every collection sampled on 2026-08-25 — no custom field group is exposed anonymously.
+          anyOf:
+          - type: object
+          - type: array
+            items: {}
+        count:
+          type: integer
+          description: Number of published objects assigned to the term.
+        description:
+          description: The description for the object.
+          anyOf:
+          - $ref: '#/components/schemas/RenderedText'
+          - type: string
+        id:
+          type: integer
+          description: Unique identifier for the object.
+        link:
+          type: string
+          format: uri
+          description: URL to the object on the public site.
+        meta:
+          type: object
+          description: Registered meta fields. No custom keys are surfaced anonymously on this deployment.
+        name:
+          type: string
+          description: HTML title / display name for the object.
+        parent:
+          type: integer
+          description: The ID for the parent of the object.
+        slug:
+          type: string
+          description: An alphanumeric identifier for the object unique to its type.
+        taxonomy:
+          type: string
+          description: Type attribution for the term.
+        yoast_head:
+          type: string
+          description: Rendered Yoast SEO head markup for the object.
+        yoast_head_json:
+          type: object
+          description: Structured Yoast SEO metadata including a schema.org graph.

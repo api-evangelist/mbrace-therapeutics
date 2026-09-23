@@ -3,7 +3,7 @@ info:
   title: MBrace Therapeutics Content Oembed API
   version: oembed/1.0
   summary: Anonymously readable oEmbed 1.0 provider endpoint on mbracetrx.com.
-  description: The read-only content surface MBrace Therapeutics exposes at https://mbracetrx.com/wp-json. MBrace Therapeutics is a privately held, clinical-stage biopharmaceutical company developing antibody-drug conjugates (ADCs) against novel oncology targets, discovered with its SPARTA in vivo antibody selection and target discovery platform. It runs no developer program and markets no product API. This document covers the oEmbed 1.0 provider endpoint. Any mbracetrx.com URL can be resolved to a titled, authored embed record — the cheapest way to turn a page URL into structured metadata without parsing HTML.
+  description: The read-only content surface MBrace Therapeutics exposes at https://mbracetrx.com/wp-json.
   contact:
     name: MBrace Therapeutics
     url: https://mbracetrx.com/
@@ -15,13 +15,13 @@ servers:
 - url: https://mbracetrx.com/wp-json
   description: Production content API
 tags:
-- name: oembed
+- name: o Embed
   description: oEmbed 1.0 provider endpoint for mbracetrx.com URLs.
 paths:
   /oembed/1.0/embed:
     get:
       tags:
-      - oembed
+      - o Embed
       operationId: getOembed
       summary: Get an oEmbed response
       description: Returns the oEmbed 1.0 response for a mbracetrx.com URL. Verified live on 2026-08-25 against https://mbracetrx.com/ — returned provider_name "MBrace Therapeutics", type "rich", and the page title and author.
@@ -61,6 +61,42 @@ components:
           schema:
             $ref: '#/components/schemas/Error'
   schemas:
+    Error:
+      type: object
+      description: The WordPress REST error envelope as returned by this deployment. Not RFC 9457 problem+json.
+      required:
+      - code
+      - message
+      - data
+      properties:
+        code:
+          type: string
+          description: Machine-readable error code.
+          examples:
+          - rest_post_invalid_id
+        message:
+          type: string
+          description: Human-readable error message.
+          examples:
+          - Invalid post ID.
+        data:
+          type: object
+          properties:
+            status:
+              type: integer
+              description: The HTTP status code.
+              examples:
+              - 404
+            params:
+              type: object
+              description: Per-parameter messages, present on rest_invalid_param.
+              additionalProperties:
+                type: string
+            details:
+              type: object
+              description: Per-parameter structured detail, present on rest_invalid_param.
+              additionalProperties:
+                type: object
     OembedResponse:
       type: object
       description: An oEmbed 1.0 rich response as returned by this deployment.
@@ -103,39 +139,3 @@ components:
         html:
           type: string
           description: The HTML required to embed the resource.
-    Error:
-      type: object
-      description: The WordPress REST error envelope as returned by this deployment. Not RFC 9457 problem+json.
-      required:
-      - code
-      - message
-      - data
-      properties:
-        code:
-          type: string
-          description: Machine-readable error code.
-          examples:
-          - rest_post_invalid_id
-        message:
-          type: string
-          description: Human-readable error message.
-          examples:
-          - Invalid post ID.
-        data:
-          type: object
-          properties:
-            status:
-              type: integer
-              description: The HTTP status code.
-              examples:
-              - 404
-            params:
-              type: object
-              description: Per-parameter messages, present on rest_invalid_param.
-              additionalProperties:
-                type: string
-            details:
-              type: object
-              description: Per-parameter structured detail, present on rest_invalid_param.
-              additionalProperties:
-                type: object

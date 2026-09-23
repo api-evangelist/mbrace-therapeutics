@@ -3,7 +3,7 @@ info:
   title: MBrace Therapeutics Content Media API
   version: wp/v2
   summary: Anonymously readable WordPress REST content API behind mbracetrx.com.
-  description: The read-only content surface MBrace Therapeutics exposes at https://mbracetrx.com/wp-json. MBrace Therapeutics is a privately held, clinical-stage biopharmaceutical company developing antibody-drug conjugates (ADCs) against novel oncology targets, discovered with its SPARTA in vivo antibody selection and target discovery platform. It runs no developer program and markets no product API. This document covers the media library — every attachment uploaded to the site, including the corporate logo and leadership headshots.
+  description: The read-only content surface MBrace Therapeutics exposes at https://mbracetrx.com/wp-json.
   contact:
     name: MBrace Therapeutics
     url: https://mbracetrx.com/
@@ -15,13 +15,13 @@ servers:
 - url: https://mbracetrx.com/wp-json
   description: Production content API
 tags:
-- name: media
+- name: Media
   description: Media library (224 attachments at harvest time).
 paths:
   /wp/v2/media:
     get:
       tags:
-      - media
+      - Media
       operationId: listMedia
       summary: List media attachments
       description: Lists media attachments. 224 items at harvest time. `media_details` carries the generated image sizes and `source_url` the direct file URL, so an agent can resolve an asset without a second request. The corporate logo is attachment 104 (logo-mbrace.svg).
@@ -237,7 +237,7 @@ paths:
   /wp/v2/media/(?P<id>[\d]+):
     get:
       tags:
-      - media
+      - Media
       operationId: getMediaItem
       summary: Get a media attachment
       description: Retrieve a single media attachment by its numeric identifier.
@@ -282,16 +282,6 @@ components:
           schema:
             $ref: '#/components/schemas/Error'
   schemas:
-    RenderedText:
-      type: object
-      description: WordPress rendered-text object.
-      properties:
-        rendered:
-          type: string
-          description: HTML for the object, transformed for display.
-        protected:
-          type: boolean
-          description: Whether the content is protected with a password.
     Error:
       type: object
       description: The WordPress REST error envelope as returned by this deployment. Not RFC 9457 problem+json.
@@ -328,6 +318,16 @@ components:
               description: Per-parameter structured detail, present on rest_invalid_param.
               additionalProperties:
                 type: object
+    RenderedText:
+      type: object
+      description: WordPress rendered-text object.
+      properties:
+        rendered:
+          type: string
+          description: HTML for the object, transformed for display.
+        protected:
+          type: boolean
+          description: Whether the content is protected with a password.
     MediaItem:
       type: object
       description: A media attachment. Field set observed live on this deployment on 2026-08-25.
